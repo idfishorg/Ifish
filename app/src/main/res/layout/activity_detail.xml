@@ -17,82 +17,172 @@
         android:adjustViewBounds="true"
         android:layout_margin="0dp" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Bass Largemouth"
-        android:id="@+id/nameView"
-        android:layout_below="@+id/imageView"
-        android:layout_alignParentStart="true" />
+    <ImageView
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:id="@+id/icon_fish"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:src="@drawable/icon_fish"
+        android:layout_marginRight="20dp"
+        android:layout_below="@id/imageView"/>
 
     <TextView
+        style="@style/regular"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Season:  "
-        android:id="@+id/season_lbl"
-        android:layout_margin="5dp"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/nameView" />
+        android:text="Bass Largemouth"
+        android:id="@+id/nameView"
+        android:layout_toRightOf="@id/icon_fish"
+        android:layout_alignTop="@id/icon_fish"/>
+
+    <View
+        android:id="@+id/line1"
+        android:layout_below="@id/nameView"
+        android:layout_width="wrap_content"
+        android:layout_alignLeft="@id/nameView"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+    <ImageView
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:id="@+id/icon_reg"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:src="@drawable/reg_icon"
+        android:layout_below="@id/line1"
+        android:layout_marginRight="20dp"/>
+
 
     <TextView
+        style="@style/regular"
+        android:id="@+id/season_lbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Season:"
+        android:width="80dp"
+        android:layout_alignTop="@id/icon_reg"
+        android:layout_below="@id/nameView"
+        android:layout_alignLeft="@id/nameView"/>
+
+    <TextView
+        style="@style/regular"
         android:id="@+id/season"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="open"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_alignTop="@+id/season_lbl"
-        android:layout_alignEnd="@+id/bag_limit" />
-
-    <!--<TextView-->
-        <!--android:id="@+id/closeDate"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_margin="5dp"-->
-        <!--android:text="close"-->
-        <!--android:textAppearance="?android:attr/textAppearanceMedium" />-->
+        android:layout_toRightOf="@id/season_lbl"
+        android:layout_alignTop="@+id/season_lbl"/>
 
     <TextView
+        style="@style/regular"
+        android:id="@+id/min_size_lbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Min size:"
+        android:width="80dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_below="@id/season_lbl"
+        android:layout_alignLeft="@id/season_lbl" />
+
+    <TextView
+        style="@style/regular"
         android:id="@+id/min_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/season_lbl"
-        android:layout_margin="5dp"
         android:text="min size"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_below="@id/season_lbl"
+        android:layout_toRightOf="@id/min_size_lbl" />
 
     <TextView
+        style="@style/regular"
+        android:id="@+id/bag_limit_lbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bag limit:"
+        android:width="80dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_below="@id/min_size"
+        android:layout_alignLeft="@id/season_lbl" />
+
+    <TextView
+        style="@style/regular"
         android:id="@+id/bag_limit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="bag limit"
+        android:text="Bag limit:"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_alignTop="@+id/min_size"
-        android:layout_toEndOf="@+id/min_size" />
+        android:layout_below="@id/min_size"
+        android:layout_toRightOf="@id/bag_limit_lbl" />
 
 
+    <View
+        android:id="@+id/line2"
+        android:layout_below="@id/bag_limit"
+        android:layout_width="wrap_content"
+        android:layout_alignLeft="@id/bag_limit_lbl"
+        android:layout_height="1dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/darker_gray"/>
 
-    <!--<TextView-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
-    <!--android:text="Record"-->
-    <!--android:id="@+id/textView"-->
-    <!--android:layout_below="@+id/textView2"-->
-    <!--android:layout_alignParentStart="true" />-->
+    <ImageView
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:id="@+id/record_icon"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:src="@drawable/record_icon"
+        android:layout_marginRight="20dp"
+        android:layout_below="@id/line2"/>
 
-    <!--<TextView-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:text="The largemouth bass is an olive-green fish, in the North East right after ice-out, it most often has a gray color,[8] marked by a series of dark, sometimes black, blotches forming a jagged horizontal stripe along each flank."-->
-    <!--android:id="@+id/textView2"-->
-    <!--android:layout_below="@+id/nameView"-->
-    <!--android:layout_alignParentStart="true"-->
-    <!--android:textSize="@dimen/abc_text_size_medium_material" />-->
+    <TextView
+        style="@style/regular"
+        android:id="@+id/weight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Weight:"
+        android:layout_alignTop="@id/record_icon"
+        android:layout_alignLeft="@id/nameView"/>
+
+    <TextView
+        style="@style/regular"
+        android:id="@+id/record_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="record date"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_alignLeft="@id/weight"
+        android:layout_below="@id/weight"/>
+
+    <TextView
+        style="@style/regular"
+        android:id="@+id/record_person"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="person"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_below="@id/record_date"
+        android:layout_alignLeft="@id/record_date" />
+
+    <TextView
+        style="@style/regular"
+        android:id="@+id/water"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="water"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_below="@id/record_person"
+        android:layout_alignLeft="@id/record_person" />
+
+
 
 </RelativeLayout>
