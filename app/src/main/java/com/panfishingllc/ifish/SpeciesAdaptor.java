@@ -19,18 +19,18 @@ public class SpeciesAdaptor extends BaseAdapter {
         this.speciesList = speciesList;
     }
     public SpeciesAdaptor() {
-        speciesList.add(new Species(0, "Bass Striped", R.drawable.bass_striped));
-        speciesList.add(new Species(1, "Bass Largemouth", R.drawable.bass_large_mouth));
-        speciesList.add(new Species(2, "Bass Smallmouth", R.drawable.bass_small_mouth));
-        speciesList.add(new Species(3, "Bass White", R.drawable.bass_white));
-        speciesList.add(new Species(4, "Bluefishh", R.drawable.bluefish));
-        speciesList.add(new Species(5, "Carp Common", R.drawable.carp_common));
-        speciesList.add(new Species(6, "Cobia", R.drawable.cobia));
-        speciesList.add(new Species(7, "Cod Atlantic", R.drawable.cod_atlantic));
-        speciesList.add(new Species(8, "Cod Pacific", R.drawable.cod_pacific));
-        speciesList.add(new Species(9, "Catfish Channel", R.drawable.catfish_channel));
-        speciesList.add(new Species(10, "Flounder Summer", R.drawable.flounder_summer));
-        speciesList.add(new Species(11, "Flounder Winter", R.drawable.flounder_winter));
+//        speciesList.add(new Species(0, "Bass Striped", R.drawable.bass_striped));
+//        speciesList.add(new Species(1, "Bass Largemouth", R.drawable.bass_large_mouth));
+//        speciesList.add(new Species(2, "Bass Smallmouth", R.drawable.bass_small_mouth));
+//        speciesList.add(new Species(3, "Bass White", R.drawable.bass_white));
+//        speciesList.add(new Species(4, "Bluefishh", R.drawable.bluefish));
+//        speciesList.add(new Species(5, "Carp Common", R.drawable.carp_common));
+//        speciesList.add(new Species(6, "Cobia", R.drawable.cobia));
+//        speciesList.add(new Species(7, "Cod Atlantic", R.drawable.cod_atlantic));
+//        speciesList.add(new Species(8, "Cod Pacific", R.drawable.cod_pacific));
+//        speciesList.add(new Species(9, "Catfish Channel", R.drawable.catfish_channel));
+//        speciesList.add(new Species(10, "Flounder Summer", R.drawable.flounder_summer));
+//        speciesList.add(new Species(11, "Flounder Winter", R.drawable.flounder_winter));
 //        speciesList.add(new Species(12, "Gar Alligator", R.drawable.gar_alligator));
 //        speciesList.add(new Species(13, "Gar Longnose", R.drawable.gar_longnose));
 //        speciesList.add(new Species(14, "Gar Shortnose", R.drawable.gar_shortnose));

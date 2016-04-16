@@ -14,6 +14,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String SPECIES_TABLE_NAME = "species";
     public static final String REGULATION_TABLE_NAME = "regulation";
     public static final String TYPE_TABLE_NAME = "type";
+    public static final String RECORD_TABLE_NAME = "record";
+
     public static final String SPECIES_COLUMN_ID = "id";
     public static final String SPECIES_COLUMN_NAME = "name";
     public static final String SPECIES_COLUMN_SIZE = "size";
@@ -54,6 +56,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         );
 
+        db.execSQL(
+                "CREATE TABLE record " +
+                        "(_id integer primary key autoincrement, " +
+                        " species_id integer, " +
+                        "weight integer, " +
+                        "record_date text, " +
+                        "location text, " +
+                        "angler text, " +
+                        "FOREIGN KEY(species_id) REFERENCES species(_id)" +
+                        ")"
+
+        );
+
+        addSomeSpecies();
         return;
     }
 
@@ -64,6 +80,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS regulation");
         db.execSQL("DROP TABLE IF EXISTS type");
         db.execSQL("DROP TABLE IF EXISTS species");
+        db.execSQL("DROP TABLE IF EXISTS record");
         onCreate(db);
     }
 
@@ -72,6 +89,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS regulation");
         db.execSQL("DROP TABLE IF EXISTS type");
         db.execSQL("DROP TABLE IF EXISTS species");
+        db.execSQL("DROP TABLE IF EXISTS record");
         onCreate(db);
         return;
     }
@@ -79,11 +97,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor getData(int id) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(
-//                "SELECT f.id, f.name, f.thumbnail, " +
-//                        " s.id, s.type " +
-//                        " r.open_date, r.close_date, r.min_size, r.bag_limit " +
-//                        " FROM regulation r INNER JOIN species f ON r.species_id = f.id  " +
-//                        " INNTER JOIN state s ON r.state_id = s.id WHERE f.id =" + id + " AND s.id = 1", null
                 "SELECT species._id, species.name, species.thumbnail, " +
                         " regulation.open_date, regulation.close_date, regulation.min_size, regulation.bag_limit " +
                         " FROM regulation INNER JOIN species ON regulation.species_id = species._id  " +
@@ -96,6 +109,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
+    public Cursor getRecord(int species_id) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(
+                "SELECT _id, weight, record_date, location, angler" +
+                        " FROM record " +
+                        " WHERE species_id = " + String.valueOf(species_id), null
+        );
+
+        if (cursor != null) {
+            cursor.moveToNext();
+        }
+//        db.close();
+        return cursor;
+    }
+
     public void insertSpecies(String name, Integer thumbnail) {
         ContentValues contentValues = new ContentValues();
         contentValues.put("name", name);
@@ -103,6 +131,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = getWritableDatabase();
         db.insert(SPECIES_TABLE_NAME, null, contentValues);
+        db.close();
+        return;
+    }
+
+    public void insertRecord(String species, int weight, String date, String location, String angler) {
+        ContentValues contentValues = new ContentValues();
+        int species_id = getSpeciesId(species);
+        contentValues.put("species_id", species_id);
+        contentValues.put("weight", weight);
+        contentValues.put("record_date", date);
+        contentValues.put("location", location);
+        contentValues.put("angler", angler);
+
+        SQLiteDatabase db = getWritableDatabase();
+        db.insert(RECORD_TABLE_NAME, null, contentValues);
 
         return;
     }
@@ -117,8 +160,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return;
     }
 
-    public void insertRegulation(int species_id, int type_id, String open_date, String close_date,
-                                 double min_size, int bag_limit ) {
+    public void insertRegulation(String name, String type, String open_date, String close_date,
+                                 double min_size, int bag_limit) {
+
+        int species_id = getSpeciesId(name);
+        if (species_id == 0)
+            return;
+
+        int type_id = getTypeId(type);
+        if (type_id == 0)
+            return;
+
         ContentValues contentValues = new ContentValues();
         contentValues.put("species_id", species_id);
         contentValues.put("type_id", type_id);
@@ -145,6 +197,41 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return;
     }
 
+    public int getTypeId(String type) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(
+                "SELECT _id FROM " + TYPE_TABLE_NAME + " WHERE type = \"" + type + "\"",
+                null
+        );
+
+        if (cursor == null)
+            return 0;
+
+        cursor.moveToNext();
+
+        if(cursor.isAfterLast())
+            return 0;
+
+        return cursor.getInt(cursor.getColumnIndex("_id"));
+    }
+
+    public int getSpeciesId(String name) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(
+                "SELECT _id FROM " + SPECIES_TABLE_NAME + " WHERE name = \"" + name +"\"",
+                null
+        );
+
+        if (cursor == null)
+            return 0;
+
+        cursor.moveToNext();
+
+        if(cursor.isAfterLast())
+            return 0;
+
+        return cursor.getInt(cursor.getColumnIndex("_id"));
+    }
 
     public Cursor getAllSpecies() {
         SQLiteDatabase db = getReadableDatabase();
@@ -159,37 +246,53 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void addSomeSpecies() {
-        insertSpecies("Bass Striped", R.drawable.bass_striped);
-        insertSpecies("Bluefish", R.drawable.bluefish);
-        insertSpecies("Bass Largemouth", R.drawable.bass_large_mouth);
-        insertSpecies("Bass Smallmouth", R.drawable.bass_small_mouth);
+        insertState("NY");
+        insertState("NJ");
+
+
         insertSpecies("Flounder Summer", R.drawable.flounder_summer);
         insertSpecies("Flounder Winter", R.drawable.flounder_winter);
         insertSpecies("Tautog", R.drawable.tautog);
+        insertSpecies("Bluefish", R.drawable.bluefish);
         insertSpecies("Weakfish", R.drawable.weakfish);
-        insertState("NY");
-        insertState("NJ");
-        insertRegulation(1, 1, "2016-04-15", "2016-12-31", 28, 1);
-        insertRegulation(2, 1, "2016-01-01", "2016-12-31", 12, 15);
-        insertRegulation(3, 1, "2016-06-17", "2016-11-30", 12, 5);
-        insertRegulation(4, 1, "2016-06-17", "2016-11-30", 99999, 0);
-        insertRegulation(5, 1, "2016-05-17", "2016-09-21", 18, 5);
-        insertRegulation(6, 1, "2016-04-01", "2016-05-30", 12, 2);
-        insertRegulation(7, 1, "2016-10-05", "2016-12-14", 16, 4);
-        insertRegulation(8, 1, "2016-01-01", "2016-12-31", 16, 1);
+        insertSpecies("Cod Atlantic", R.drawable.cod_atlantic);
+        insertSpecies("Pollock", R.drawable.pollock);
+        insertSpecies("Haddock", R.drawable.haddock);
+        insertSpecies("Bass Striped", R.drawable.bass_striped);
+        insertSpecies("Drum Red", R.drawable.drum_red);
+        insertSpecies("Mackerel Spanish", R.drawable.mackerel_span);
+        insertSpecies("Mackerel King", R.drawable.mackerel_king);
+        insertSpecies("Cobia", R.drawable.cobia);
 
+        insertSpecies("Bass Largemouth", R.drawable.bass_large_mouth);
+        insertSpecies("Bass Smallmouth", R.drawable.bass_small_mouth);
 
+        // NY regulation
+        insertRegulation("Bass Striped",    "NY", "2016-04-15", "2016-12-31", 28, 1);
+        insertRegulation("Bluefish",        "NY", "2016-01-01", "2016-12-31", 12, 15);
+        insertRegulation("Bass Largemouth", "NY", "2016-06-17", "2016-11-30", 12, 5);
+        insertRegulation("Bass Smallmouth", "NY", "2016-06-17", "2016-11-30", 99999, 0);
+        insertRegulation("Flounder Summer", "NY", "2016-05-17", "2016-09-21", 18, 5);
+        insertRegulation("Flounder Winter", "NY", "2016-04-01", "2016-05-30", 12, 2);
+        insertRegulation("Tautog",          "NY", "2016-10-05", "2016-12-14", 16, 4);
+        insertRegulation("Weakfish",        "NY", "2016-01-01", "2016-12-31", 16, 1);
+        insertRegulation("Cod Atlantic",    "NY", "2016-01-01", "2016-12-31", 22, 10);
+        insertRegulation("Cobia",           "NY", "2016-01-01", "2016-12-31", 37, 2);
 
-//        insertSpecies("Bass Striped", 20, 81, R.drawable.bass_striped);
-//        insertSpecies("Bluefish", 30, 45, R.drawable.bluefish);
+        // world record
+        insertRecord("Bass Striped",     1310, "2011-08-04", "Long Island Sound, Westbrook, Connecticut, USA", "Gregory Myerson");
+        insertRecord("Bluefish",         508,  "1972-01-30", "Hatteras, North Carolina, USA", "James Hussey");
+        insertRecord("Bass Largemouth",  356,  "1932-06-02", "Montgomery Lake, Georgia, USA", "George W. Perry");
+        insertRecord("Mackerel Spanish", 206,  "1987-11-04", "Ocracoke Inlet, North Carolina, USA", "Robert Cranton");
+        insertRecord("Mackerel King",    1488, "1999-04-18", "San Juan, Puerto Rico", "Steve Graulau");
+        insertRecord("Cobia",            2169, "1985-07-09", "Shark Bay, W.A., Australia", "Peter Goulding");
+
 //        insertSpecies("Bass White", 10, 40, R.drawable.bass_white);
 //        insertSpecies("Bass Largemouth", 11, 12, R.drawable.bass_large_mouth);
 //        insertSpecies("Bass Smallmouth", 11, 23, R.drawable.bass_small_mouth);
 //        insertSpecies("Seabass Black", 12, 12, R.drawable.bass_black_sea);
 //        insertSpecies("Carp Common", 1, 1, R.drawable.carp_common);
 //        insertSpecies("Catfish Channel", 1, 1, R.drawable.catfish_channel);
-//        insertSpecies("Cobia", 1, 1, R.drawable.cobia);
-//        insertSpecies("Cod Atlantic", 1, 1, R.drawable.cod_atlantic);
 //        insertSpecies("Cod Pacific", 2, 2, R.drawable.cod_pacific);
 //        insertSpecies("Flounder Summer", 1, 1, R.drawable.flounder_summer);
 //        insertSpecies("Flounder Winter", 1, 1, R.drawable.flounder_winter);
@@ -218,8 +321,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //        insertSpecies("Swordfish",1,1,R.drawable.swordfish);
 //        insertSpecies("Taimen",1,1,R.drawable.taimen);
 //        insertSpecies("Tarpon",1,1,R.drawable.tarpon);
-//        insertSpecies("Tautog",1,1,R.drawable.tautog);
-//        insertSpecies("Weakfish",1,1, R.drawable.weakfish);
 //        insertSpecies("Trout Rainbow",1,1,R.drawable.trout_rainbow);
 
         return;

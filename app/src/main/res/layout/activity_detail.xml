@@ -149,7 +149,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Weight:"
+        android:text="World Record: 9lb 5oz"
         android:layout_alignTop="@id/record_icon"
         android:layout_alignLeft="@id/nameView"/>
 
@@ -158,30 +158,32 @@
         android:id="@+id/record_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="record date"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Jan 6, 2009"
+        android:layout_below="@id/weight"
         android:layout_alignLeft="@id/weight"
-        android:layout_below="@id/weight"/>
+        android:layout_marginRight="10dp"
+        android:layout_toEndOf="@+id/record_icon" />
 
     <TextView
         style="@style/regular"
-        android:id="@+id/record_person"
+        android:id="@+id/location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="person"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_below="@id/record_date"
-        android:layout_alignLeft="@id/record_date" />
+        android:text="Montgomery Lake, Georgia, USA"
+        android:layout_alignLeft="@id/record_date"
+        android:layout_below="@id/record_date"/>
 
-    <TextView
-        style="@style/regular"
-        android:id="@+id/water"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="water"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_below="@id/record_person"
-        android:layout_alignLeft="@id/record_person" />
+    <!--<TextView-->
+        <!--style="@style/regular"-->
+        <!--android:id="@+id/record_person"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="person"-->
+        <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+        <!--android:layout_below="@id/record_date"-->
+        <!--android:layout_alignLeft="@id/record_date" />-->
+
+
 
 
 
