@@ -72,10 +72,15 @@ public class MainActivity extends ActionBarActivity {
 //                return true;
             case R.id.clear:
                 db.clear();
+                break;
+            case R.id.set_location:
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
+        return true;
 
-//        return super.onOptionsItemSelected(item);
+//
+//      return super.onOptionsItemSelected(item);
     }
 }

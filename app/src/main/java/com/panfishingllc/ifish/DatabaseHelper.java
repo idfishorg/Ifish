@@ -22,19 +22,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String SPECIES_COLUMN_RECORD = "record";
     public static final String SPECIES_COLUMN_IMAGE = "image";
 
+    public static final String CREATE_SPECIES_TABLE = "CREATE TABLE species " +
+            "(_id integer primary key autoincrement, name text, thumbnail integer)";
+
     DatabaseHelper(Context context) {
         super(context, DB_NAME, null, 1);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(
-                "CREATE TABLE species " +
-                        "(_id integer primary key autoincrement, " +
-                        "name text, " +
-                        "thumbnail integer)"
-        );
-
+        db.execSQL(CREATE_SPECIES_TABLE);
         db.execSQL(
                 "CREATE TABLE  type" +
                         "(_id integer primary key autoincrement,  " +
@@ -248,7 +245,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void addSomeSpecies() {
         insertState("NY");
         insertState("NJ");
-
+        insertState("MA");
+        insertState("CT");
 
         insertSpecies("Flounder Summer", R.drawable.flounder_summer);
         insertSpecies("Flounder Winter", R.drawable.flounder_winter);

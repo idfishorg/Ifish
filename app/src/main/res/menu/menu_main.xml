@@ -9,7 +9,11 @@
     </item>
 
     <item android:id="@+id/clear"
-        android:title="clear">
+        android:title="Clear">
+    </item>
+
+    <item android:id="@+id/set_location"
+        android:title="Set Location">
     </item>
 
 </menu>
