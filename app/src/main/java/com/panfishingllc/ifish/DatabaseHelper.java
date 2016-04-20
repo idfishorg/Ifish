@@ -11,19 +11,61 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DB_NAME = "fish.db";
+
     public static final String SPECIES_TABLE_NAME = "species";
     public static final String REGULATION_TABLE_NAME = "regulation";
-    public static final String TYPE_TABLE_NAME = "type";
     public static final String RECORD_TABLE_NAME = "record";
+    public static final String TYPE_TABLE_NAME = "type";
+    public static final String STATE_TABLE_NAME = "state";
 
-    public static final String SPECIES_COLUMN_ID = "id";
-    public static final String SPECIES_COLUMN_NAME = "name";
-    public static final String SPECIES_COLUMN_SIZE = "size";
-    public static final String SPECIES_COLUMN_RECORD = "record";
-    public static final String SPECIES_COLUMN_IMAGE = "image";
+    // species table
+    public static final String NAME = "name";
+    public static final String THUMBNAIL = "thumbnail";
+    public static final String CREATE_SPECIES_TABLE = "CREATE TABLE " + SPECIES_TABLE_NAME
+            + "(_id INTEGER PRIMARY KEY AUTOINCREMENT "
+            + NAME + " TEXT, "
+            + THUMBNAIL + " INTEGER)";
 
-    public static final String CREATE_SPECIES_TABLE = "CREATE TABLE species " +
-            "(_id integer primary key autoincrement, name text, thumbnail integer)";
+    // type table
+    public static final String TYPE = "type";
+    public static final String CREATE_TYPE_TABLE = "CREATE TABLE " + TYPE_TABLE_NAME
+            + "(_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + TYPE + " TEXT)";
+
+    // regulation table
+    public static final String SPECIES_ID = "species_id";
+    public static final String TYPE_ID = "type_id";
+    public static final String OPEN_DATE = "open_date";
+    public static final String CLOSE_DATE = "close_date";
+    public static final String MIN_SIZE = "min_size";
+    public static final String BAG_LIMIT = "bag_limit";
+    public static final String CREATE_REGULATION_TABLE = "CREATE TABLE " + REGULATION_TABLE_NAME
+            + "(" + SPECIES_ID + " INTEGER, "
+            + TYPE_ID + " INTEGER, "
+            + OPEN_DATE + " TEXT, "
+            + CLOSE_DATE + " TEXT, "
+            + MIN_SIZE + " REAL, "
+            + BAG_LIMIT + " INTEGER, "
+            + "PRIMARY KEY(" + SPECIES_ID + ", " + TYPE_ID + "), "
+            + "FOREIGN KEY(" + SPECIES_ID + ") REFERENCES " + SPECIES_TABLE_NAME + "(_id), "
+            + "FOREIGN KEY(" + TYPE_ID + ") REFERENCES " + TYPE_TABLE_NAME +"(_id) "
+            + ")";
+
+    // record table
+    public static final String WEIGHT = "weight";
+    public static final String RECORD_DATE = "record_date";
+    public static final String LOCATION = "location";
+    public static final String ANGLER = "angler";
+
+    public static final String CREATE_RECORD_TABLE = "CREATE TABLE " + RECORD_TABLE_NAME +
+            "(_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + SPECIES_ID +" INTEGER, "
+            + WEIGHT + " INTEGER, "
+            + RECORD_DATE + " TEXT, "
+            + LOCATION + " TEXT, "
+            + ANGLER + " TEXT, "
+            + "FOREIGN KEY(" + SPECIES_ID + ") REFERENCES " + SPECIES_TABLE_NAME + "(_id)"
+            + ")";
 
     DatabaseHelper(Context context) {
         super(context, DB_NAME, null, 1);
@@ -31,63 +73,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        db.execSQL(CREATE_TYPE_TABLE);
         db.execSQL(CREATE_SPECIES_TABLE);
-        db.execSQL(
-                "CREATE TABLE  type" +
-                        "(_id integer primary key autoincrement,  " +
-                        "type text)"
-        );
+        db.execSQL(CREATE_REGULATION_TABLE);
+        db.execSQL(CREATE_RECORD_TABLE);
 
-        db.execSQL(
-                "CREATE TABLE regulation " +
-                        "(species_id integer, " +
-                        "type_id integer, " +
-                        "open_date text, " +
-                        "close_date text, " +
-                        "min_size real, " +
-                        "bag_limit integer, " +
-                        "PRIMARY KEY (species_id, type_id), " +
-                        "FOREIGN KEY(species_id) REFERENCES species(_id), " +
-                        "FOREIGN KEY(type_id) REFERENCES type(_id) " +
-                        ")"
-
-        );
-
-        db.execSQL(
-                "CREATE TABLE record " +
-                        "(_id integer primary key autoincrement, " +
-                        " species_id integer, " +
-                        "weight integer, " +
-                        "record_date text, " +
-                        "location text, " +
-                        "angler text, " +
-                        "FOREIGN KEY(species_id) REFERENCES species(_id)" +
-                        ")"
-
-        );
-
-        addSomeSpecies();
+        // populate data
+//        addSomeSpecies();
         return;
     }
 
     public void clear() {
         SQLiteDatabase db = getWritableDatabase();
-//        db.execSQL("Delete from species WHERE true");
-//        db.delete("species", null, null);
-        db.execSQL("DROP TABLE IF EXISTS regulation");
-        db.execSQL("DROP TABLE IF EXISTS type");
-        db.execSQL("DROP TABLE IF EXISTS species");
-        db.execSQL("DROP TABLE IF EXISTS record");
-        onCreate(db);
+        db.execSQL("DROP TABLE IF EXISTS " + REGULATION_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TYPE_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + SPECIES_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + RECORD_TABLE_NAME);
+        db.close();
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS regulation");
-        db.execSQL("DROP TABLE IF EXISTS type");
-        db.execSQL("DROP TABLE IF EXISTS species");
-        db.execSQL("DROP TABLE IF EXISTS record");
-        onCreate(db);
+//        clear();
         return;
     }
 
@@ -117,14 +124,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor != null) {
             cursor.moveToNext();
         }
-//        db.close();
         return cursor;
     }
 
     public void insertSpecies(String name, Integer thumbnail) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put("name", name);
-        contentValues.put("thumbnail", thumbnail);
+        contentValues.put(NAME, name);
+        contentValues.put(THUMBNAIL, thumbnail);
 
         SQLiteDatabase db = getWritableDatabase();
         db.insert(SPECIES_TABLE_NAME, null, contentValues);
@@ -135,30 +141,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void insertRecord(String species, int weight, String date, String location, String angler) {
         ContentValues contentValues = new ContentValues();
         int species_id = getSpeciesId(species);
-        contentValues.put("species_id", species_id);
-        contentValues.put("weight", weight);
-        contentValues.put("record_date", date);
-        contentValues.put("location", location);
-        contentValues.put("angler", angler);
+
+        contentValues.put(SPECIES_ID, species_id);
+        contentValues.put(WEIGHT, weight);
+        contentValues.put(RECORD_DATE, date);
+        contentValues.put(LOCATION, location);
+        contentValues.put(ANGLER, angler);
 
         SQLiteDatabase db = getWritableDatabase();
         db.insert(RECORD_TABLE_NAME, null, contentValues);
-
+        db.close();
         return;
     }
 
     public void insertState(String name) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put("type", name);
+
+        contentValues.put(TYPE, name);
 
         SQLiteDatabase db = getWritableDatabase();
         db.insert(TYPE_TABLE_NAME, null, contentValues);
-
+        db.close();
         return;
     }
 
-    public void insertRegulation(String name, String type, String open_date, String close_date,
-                                 double min_size, int bag_limit) {
+    public void insertRegulation(String name,
+                                 String type,
+                                 String open_date,
+                                 String close_date,
+                                 double min_size,
+                                 int bag_limit) {
 
         int species_id = getSpeciesId(name);
         if (species_id == 0)
@@ -169,37 +181,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return;
 
         ContentValues contentValues = new ContentValues();
-        contentValues.put("species_id", species_id);
-        contentValues.put("type_id", type_id);
-        contentValues.put("open_date", open_date);
-        contentValues.put("close_date", close_date);
-        contentValues.put("min_size", min_size);
-        contentValues.put("bag_limit", bag_limit);
+        contentValues.put(SPECIES_ID, species_id);
+        contentValues.put(TYPE_ID, type_id);
+        contentValues.put(OPEN_DATE, open_date);
+        contentValues.put(CLOSE_DATE, close_date);
+        contentValues.put(MIN_SIZE, min_size);
+        contentValues.put(BAG_LIMIT, bag_limit);
 
         SQLiteDatabase db = getWritableDatabase();
         db.insert(REGULATION_TABLE_NAME, null, contentValues);
-
+        db.close();
         return;
     }
 
     public void updateSpecies(Integer id, String name, Integer size, Integer record) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put("name", name);
+        contentValues.put(NAME, name);
         contentValues.put("size", size);
         contentValues.put("record", record);
 
         SQLiteDatabase db = getWritableDatabase();
         db.update(SPECIES_TABLE_NAME, contentValues, "id = ? ", new String[]{Integer.toString(id)});
-
+        db.close();
         return;
     }
 
     public int getTypeId(String type) {
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery(
-                "SELECT _id FROM " + TYPE_TABLE_NAME + " WHERE type = \"" + type + "\"",
-                null
-        );
+        String q = "SELECT _id FROM " + TYPE_TABLE_NAME + " WHERE " + TYPE + "= \"" + type + "\"";
+        Cursor cursor = db.rawQuery(q, null);
 
         if (cursor == null)
             return 0;
@@ -209,15 +219,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if(cursor.isAfterLast())
             return 0;
 
-        return cursor.getInt(cursor.getColumnIndex("_id"));
+        return cursor.getInt(cursor.getColumnIndex("_ID"));
     }
 
     public int getSpeciesId(String name) {
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery(
-                "SELECT _id FROM " + SPECIES_TABLE_NAME + " WHERE name = \"" + name +"\"",
-                null
-        );
+        String q = "SELECT _id FROM " + SPECIES_TABLE_NAME + " WHERE " + NAME + "=\"" + name +"\"";
+        Cursor cursor = db.rawQuery(q, null);
 
         if (cursor == null)
             return 0;
@@ -227,12 +235,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if(cursor.isAfterLast())
             return 0;
 
-        return cursor.getInt(cursor.getColumnIndex("_id"));
+        return cursor.getInt(cursor.getColumnIndex("_ID"));
     }
 
     public Cursor getAllSpecies() {
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query("species", new String[]{"_id", "name", "thumbnail"},
+
+        Cursor cursor = db.query(SPECIES_TABLE_NAME, new String[]{"_ID", "name", "thumbnail"},
+                null, null, null, null, null);
+
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+
+        return cursor;
+    }
+
+    public Cursor getAllSpecies(String state) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(SPECIES_TABLE_NAME, new String[]{"_ID", "name", "thumbnail"},
                 null, null, null, null, null);
 
         if (cursor != null) {

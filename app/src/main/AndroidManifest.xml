@@ -20,6 +20,12 @@
             android:name=".Detail"
             android:label="@string/title_activity_detail" >
         </activity>
+
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings" >
+        </activity>
+
     </application>
 
 </manifest>

@@ -15,12 +15,14 @@ import java.util.ArrayList;
 
 public class MainActivity extends ActionBarActivity {
     private DatabaseHelper db = new DatabaseHelper(this);
+    public static String STATE = "state";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ListView speciesListView = (ListView) findViewById(R.id.speciesView);
+
 
         Cursor cursor = db.getAllSpecies();
 
@@ -74,6 +76,8 @@ public class MainActivity extends ActionBarActivity {
                 db.clear();
                 break;
             case R.id.set_location:
+                Intent i = new Intent(this, SettingsActivity.class);
+                startActivity(i);
                 break;
             default:
                 return super.onOptionsItemSelected(item);
