@@ -9,13 +9,69 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.util.Log;
 
 import java.util.ArrayList;
 
 
 public class MainActivity extends ActionBarActivity {
     private DatabaseHelper db = new DatabaseHelper(this);
+    private String state;
     public static String STATE = "state";
+    public SpeciesAdaptor adapter;
+
+    @Override
+    public void onResume() {
+        super.onResume();  // Always call the superclass method first
+        Log.e("AA", "onResume()");
+        SharedPreferences setting = PreferenceManager.getDefaultSharedPreferences(this);
+        Log.e("BB", setting.getString("state", "CA"));
+
+        String updatedState = setting.getString("state", "NY");
+        if (!updatedState.equals(state)) {
+            Cursor cursor = db.getAllSpecies(updatedState);
+
+            ArrayList<Species> updatedList = new ArrayList<Species>();
+            while (!cursor.isAfterLast()) {
+                int id = cursor.getInt(cursor.getColumnIndex("_id"));
+                String name = cursor.getString(cursor.getColumnIndex("name"));
+                int thumbnail = cursor.getInt(cursor.getColumnIndex("thumbnail"));
+                updatedList.add(new Species(id, name, thumbnail));
+                cursor.moveToNext();
+            }
+
+            adapter.setSpeciesList(updatedList);
+            adapter.notifyDataSetChanged();
+            state = updatedState;
+        }
+
+        SharedPreferences.OnSharedPreferenceChangeListener prefListener =
+                new SharedPreferences.OnSharedPreferenceChangeListener() {
+                    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+                        Log.e("AA", prefs.getString("state", "CA"));
+                        if (key.equals("state")) {
+                            Log.e("AA", prefs.getString("state", "CA"));
+                            String updatedState = prefs.getString("state", "NY");
+                            Cursor cursor = db.getAllSpecies(updatedState);
+
+                            ArrayList<Species> updatedList = new ArrayList<Species>();
+                            while (!cursor.isAfterLast()) {
+                                int id = cursor.getInt(cursor.getColumnIndex("_id"));
+                                String name = cursor.getString(cursor.getColumnIndex("name"));
+                                int thumbnail = cursor.getInt(cursor.getColumnIndex("thumbnail"));
+                                updatedList.add(new Species(id, name, thumbnail));
+                                cursor.moveToNext();
+                            }
+
+                            adapter.setSpeciesList(updatedList);
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                };
+        setting.registerOnSharedPreferenceChangeListener(prefListener);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,8 +79,10 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         ListView speciesListView = (ListView) findViewById(R.id.speciesView);
 
-
-        Cursor cursor = db.getAllSpecies();
+        SharedPreferences setting = PreferenceManager.getDefaultSharedPreferences(this);
+        state = setting.getString("state", "NY");
+        Log.e("AAA", state);
+        Cursor cursor = db.getAllSpecies(state);
 
         ArrayList<Species> speciesList = new ArrayList<Species>();
         while (!cursor.isAfterLast()) {
@@ -35,7 +93,7 @@ public class MainActivity extends ActionBarActivity {
             cursor.moveToNext();
         }
 
-        SpeciesAdaptor adapter = new SpeciesAdaptor(speciesList);
+        adapter = new SpeciesAdaptor(speciesList);
         speciesListView.setAdapter(adapter);
 
         speciesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -47,7 +105,19 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
+
     }
+
+    //called when the preferences are changed in any way
+//    @Override
+//    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,String key) {
+//        if ("key" == "state") {
+//            Log.e("AA", sharedPreferences.getString("state", "CA"));
+//        }
+////        txtMessage1.setText(prefs.getString("custom_message_1", ""));
+////        txtMessage2.setText(prefs.getString("custom_message_2", ""));
+//    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -87,4 +157,7 @@ public class MainActivity extends ActionBarActivity {
 //
 //      return super.onOptionsItemSelected(item);
     }
+
+
+
 }
