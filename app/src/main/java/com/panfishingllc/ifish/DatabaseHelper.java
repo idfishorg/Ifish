@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 /**
  * Created by jing on 4/10/2016.
@@ -17,12 +18,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String RECORD_TABLE_NAME = "record";
     public static final String TYPE_TABLE_NAME = "type";
     public static final String STATE_TABLE_NAME = "state";
+    public static final String SPECIES_STATE_TABLE_NAME = "species_state_table";
 
     // species table
     public static final String NAME = "name";
     public static final String THUMBNAIL = "thumbnail";
     public static final String CREATE_SPECIES_TABLE = "CREATE TABLE " + SPECIES_TABLE_NAME
-            + "(_id INTEGER PRIMARY KEY AUTOINCREMENT "
+            + "(_id INTEGER PRIMARY KEY AUTOINCREMENT, "
             + NAME + " TEXT, "
             + THUMBNAIL + " INTEGER)";
 
@@ -39,6 +41,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String CLOSE_DATE = "close_date";
     public static final String MIN_SIZE = "min_size";
     public static final String BAG_LIMIT = "bag_limit";
+
     public static final String CREATE_REGULATION_TABLE = "CREATE TABLE " + REGULATION_TABLE_NAME
             + "(" + SPECIES_ID + " INTEGER, "
             + TYPE_ID + " INTEGER, "
@@ -57,14 +60,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String LOCATION = "location";
     public static final String ANGLER = "angler";
 
-    public static final String CREATE_RECORD_TABLE = "CREATE TABLE " + RECORD_TABLE_NAME +
-            "(_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+    public static final String CREATE_RECORD_TABLE = "CREATE TABLE " + RECORD_TABLE_NAME
+            + "(_id INTEGER PRIMARY KEY AUTOINCREMENT, "
             + SPECIES_ID +" INTEGER, "
             + WEIGHT + " INTEGER, "
             + RECORD_DATE + " TEXT, "
             + LOCATION + " TEXT, "
             + ANGLER + " TEXT, "
             + "FOREIGN KEY(" + SPECIES_ID + ") REFERENCES " + SPECIES_TABLE_NAME + "(_id)"
+            + ")";
+
+    public static final String CREATE_SPECIES_STATE_TABLE = "create table " + SPECIES_STATE_TABLE_NAME
+            + "(" + SPECIES_ID + " INTEGER, "
+            + TYPE_ID + " INTEGER, "
+            + "PRIMARY KEY(" + SPECIES_ID + ", " + TYPE_ID + "), "
+            + "FOREIGN KEY(" + SPECIES_ID + ") REFERENCES " + SPECIES_TABLE_NAME + "(_id), "
+            + "FOREIGN KEY(" + TYPE_ID + ") REFERENCES " + TYPE_TABLE_NAME +"(_id) "
             + ")";
 
     DatabaseHelper(Context context) {
@@ -77,9 +88,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_SPECIES_TABLE);
         db.execSQL(CREATE_REGULATION_TABLE);
         db.execSQL(CREATE_RECORD_TABLE);
-
-        // populate data
-//        addSomeSpecies();
+        db.execSQL(CREATE_SPECIES_STATE_TABLE);
         return;
     }
 
@@ -89,6 +98,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TYPE_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + SPECIES_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + RECORD_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + SPECIES_STATE_TABLE_NAME);
+        onCreate(db);
         db.close();
     }
 
@@ -165,6 +176,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return;
     }
 
+
     public void insertRegulation(String name,
                                  String type,
                                  String open_date,
@@ -209,6 +221,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public int getTypeId(String type) {
         SQLiteDatabase db = getReadableDatabase();
         String q = "SELECT _id FROM " + TYPE_TABLE_NAME + " WHERE " + TYPE + "= \"" + type + "\"";
+        Log.e("DB", q);
         Cursor cursor = db.rawQuery(q, null);
 
         if (cursor == null)
@@ -219,7 +232,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if(cursor.isAfterLast())
             return 0;
 
-        return cursor.getInt(cursor.getColumnIndex("_ID"));
+        return cursor.getInt(cursor.getColumnIndex("_id"));
     }
 
     public int getSpeciesId(String name) {
@@ -235,13 +248,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if(cursor.isAfterLast())
             return 0;
 
-        return cursor.getInt(cursor.getColumnIndex("_ID"));
+        return cursor.getInt(cursor.getColumnIndex("_id"));
     }
 
     public Cursor getAllSpecies() {
         SQLiteDatabase db = getReadableDatabase();
 
-        Cursor cursor = db.query(SPECIES_TABLE_NAME, new String[]{"_ID", "name", "thumbnail"},
+        Cursor cursor = db.query(SPECIES_TABLE_NAME, new String[]{"_id", "name", "thumbnail"},
                 null, null, null, null, null);
 
         if (cursor != null) {
@@ -251,15 +264,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
+    public void insertSpeciesState(String species, String state) {
+        int speciesId = getSpeciesId(species);
+        int stateId = getTypeId(state);
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(SPECIES_ID, speciesId);
+        contentValues.put(TYPE_ID, stateId);
+
+        SQLiteDatabase db = getWritableDatabase();
+        db.insert(SPECIES_STATE_TABLE_NAME, null, contentValues);
+        db.close();
+    }
+
     public Cursor getAllSpecies(String state) {
+        int stateId = getTypeId(state);
+        Log.e("getAllSpecies", state + " " + String.valueOf(stateId));
+
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(SPECIES_TABLE_NAME, new String[]{"_ID", "name", "thumbnail"},
-                null, null, null, null, null);
+        Cursor cursor = db.rawQuery(
+                "SELECT species._id, species.name, species.thumbnail " +
+                        " FROM species INNER JOIN species_state_table ON species._id = species_state_table.species_id " +
+                        " INNER JOIN type ON species_state_table.type_id = type._id " +
+                        " WHERE type.type = \"" + state + "\"", null
+        );
 
         if (cursor != null) {
-            cursor.moveToFirst();
+            cursor.moveToNext();
         }
-
         return cursor;
     }
 
@@ -282,6 +314,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         insertSpecies("Mackerel Spanish", R.drawable.mackerel_span);
         insertSpecies("Mackerel King", R.drawable.mackerel_king);
         insertSpecies("Cobia", R.drawable.cobia);
+
+        insertSpeciesState("Flounder Summer", "NY");
+        insertSpeciesState("Tautog", "NY");
+        insertSpeciesState("Weakfish", "NJ");
+        insertSpeciesState("Cod Atlantic", "NJ");
 
         insertSpecies("Bass Largemouth", R.drawable.bass_large_mouth);
         insertSpecies("Bass Smallmouth", R.drawable.bass_small_mouth);
