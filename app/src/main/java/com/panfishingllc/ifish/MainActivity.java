@@ -26,6 +26,9 @@ public class MainActivity extends ActionBarActivity {
     public void onResume() {
         super.onResume();  // Always call the superclass method first
         Log.e("AA", "onResume()");
+        if (true)
+            return;
+
         SharedPreferences setting = PreferenceManager.getDefaultSharedPreferences(this);
         Log.e("BB", setting.getString("state", "CA"));
 
@@ -35,9 +38,9 @@ public class MainActivity extends ActionBarActivity {
 
             ArrayList<Species> updatedList = new ArrayList<Species>();
             while (!cursor.isAfterLast()) {
-                int id = cursor.getInt(cursor.getColumnIndex("_id"));
-                String name = cursor.getString(cursor.getColumnIndex("name"));
-                int thumbnail = cursor.getInt(cursor.getColumnIndex("thumbnail"));
+                int id = cursor.getInt(cursor.getColumnIndex("SpeciesId"));
+                String name = cursor.getString(cursor.getColumnIndex("SpeciesName"));
+                int thumbnail = cursor.getInt(cursor.getColumnIndex("Thumbnail"));
                 updatedList.add(new Species(id, name, thumbnail));
                 cursor.moveToNext();
             }
@@ -58,8 +61,8 @@ public class MainActivity extends ActionBarActivity {
 
                             ArrayList<Species> updatedList = new ArrayList<Species>();
                             while (!cursor.isAfterLast()) {
-                                int id = cursor.getInt(cursor.getColumnIndex("_id"));
-                                String name = cursor.getString(cursor.getColumnIndex("name"));
+                                int id = cursor.getInt(cursor.getColumnIndex("SpeciesId"));
+                                String name = cursor.getString(cursor.getColumnIndex("SpeciesName"));
                                 int thumbnail = cursor.getInt(cursor.getColumnIndex("thumbnail"));
                                 updatedList.add(new Species(id, name, thumbnail));
                                 cursor.moveToNext();
@@ -79,6 +82,9 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         ListView speciesListView = (ListView) findViewById(R.id.speciesView);
 
+        if (false)
+            return;
+
         SharedPreferences setting = PreferenceManager.getDefaultSharedPreferences(this);
         state = setting.getString("state", "NY");
         Log.e("AAA", state);
@@ -86,9 +92,9 @@ public class MainActivity extends ActionBarActivity {
 
         ArrayList<Species> speciesList = new ArrayList<Species>();
         while (!cursor.isAfterLast()) {
-            int id = cursor.getInt(cursor.getColumnIndex("_id"));
-            String name = cursor.getString(cursor.getColumnIndex("name"));
-            int thumbnail = cursor.getInt(cursor.getColumnIndex("thumbnail"));
+            int id = cursor.getInt(cursor.getColumnIndex("SpeciesId"));
+            String name = cursor.getString(cursor.getColumnIndex("SpeciesName"));
+            int thumbnail = cursor.getInt(cursor.getColumnIndex("Thumbnail"));
             speciesList.add(new Species(id, name, thumbnail));
             cursor.moveToNext();
         }
