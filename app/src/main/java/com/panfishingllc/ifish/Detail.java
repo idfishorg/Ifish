@@ -2,17 +2,22 @@ package com.panfishingllc.ifish;
 
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
-import java.util.Calendar;
-//import java.util.Date;
+import android.widget.ArrayAdapter;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+
+//import java.util.Date;
 
 
 public class Detail extends ActionBarActivity {
@@ -92,17 +97,24 @@ public class Detail extends ActionBarActivity {
         seasonView.setText(openDate + " -- " + closeDate);
 
         cursor = db.getRule(seasonId);
-        if (!cursor.isAfterLast()) {
-            TextView size = (TextView) findViewById(R.id.min_size);
-            size.setText(cursor.getString(cursor.getColumnIndex("Rule")));
+        ArrayList<String> ruleList = new ArrayList<String>();
+        while (!cursor.isAfterLast()) {
+            ruleList.add(cursor.getString(cursor.getColumnIndex("Rule")));
+            Log.e("RU", cursor.getString(cursor.getColumnIndex("Rule")));
             cursor.moveToNext();
         }
 
-        if (!cursor.isAfterLast()) {
-            TextView bag = (TextView) findViewById(R.id.bag_limit);
-            bag.setText(cursor.getString(cursor.getColumnIndex("Rule")));
-        }
+        RuleAdaptor adaptor = new RuleAdaptor(ruleList);
+        ListView ruleView = (ListView) findViewById(R.id.rules);
+        ruleView.setAdapter(adaptor);
 
+//        if (!cursor.isAfterLast()) {
+//            TextView bag = (TextView) findViewById(R.id.bag_limit);
+//            bag.setText(cursor.getString(cursor.getColumnIndex("Rule")));
+//        }
+
+        if (true)
+            return;
         Cursor recordCursor = db.getRecord(id);
         if (!recordCursor.isAfterLast()) {
             // set weight

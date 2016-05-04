@@ -80,58 +80,23 @@
         android:layout_toRightOf="@id/season_lbl"
         android:layout_alignTop="@+id/season_lbl"/>
 
-    <TextView
-        style="@style/regular"
-        android:id="@+id/min_size_lbl"
+    <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Min size:"
-        android:width="80dp"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_below="@id/season_lbl"
-        android:layout_alignLeft="@id/season_lbl" />
-
-    <TextView
-        style="@style/regular"
-        android:id="@+id/min_size"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="min size"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_below="@id/season_lbl"
-        android:layout_toRightOf="@id/min_size_lbl" />
-
-    <TextView
-        style="@style/regular"
-        android:id="@+id/bag_limit_lbl"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Bag limit:"
-        android:width="80dp"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_below="@id/min_size"
-        android:layout_alignLeft="@id/season_lbl" />
-
-    <TextView
-        style="@style/regular"
-        android:id="@+id/bag_limit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Bag limit:"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_below="@id/min_size"
-        android:layout_toRightOf="@id/bag_limit_lbl" />
-
+        android:id="@+id/rules"
+        android:divider="@null"
+        android:layout_alignLeft="@id/season_lbl"
+        android:layout_below="@id/season_lbl"/>
 
     <View
         android:id="@+id/line2"
-        android:layout_below="@id/bag_limit"
         android:layout_width="wrap_content"
-        android:layout_alignLeft="@id/bag_limit_lbl"
         android:layout_height="1dp"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="10dp"
-        android:background="@android:color/darker_gray"/>
+        android:background="@android:color/darker_gray"
+        android:layout_alignLeft="@id/season_lbl"
+        android:layout_below="@id/rules" />
 
     <ImageView
         android:layout_width="25dp"
@@ -172,6 +137,8 @@
         android:text="Montgomery Lake, Georgia, USA"
         android:layout_alignLeft="@id/record_date"
         android:layout_below="@id/record_date"/>
+
+
 
     <!--<TextView-->
         <!--style="@style/regular"-->

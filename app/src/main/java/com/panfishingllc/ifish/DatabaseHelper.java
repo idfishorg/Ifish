@@ -217,11 +217,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public Cursor getRule(int seasonId) {
         SQLiteDatabase db = getReadableDatabase();
+        Log.e("RU", String.valueOf(seasonId));
         Cursor cursor = db.rawQuery(
                 "SELECT Rule FROM Rule_T WHERE SeasonId = " + String.valueOf(seasonId), null);
 
         if (cursor != null) {
-            cursor.moveToNext();
+            cursor.moveToFirst();
         }
         return cursor;
     }
