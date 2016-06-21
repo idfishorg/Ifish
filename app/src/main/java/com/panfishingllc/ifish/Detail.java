@@ -32,7 +32,6 @@ public class Detail extends ActionBarActivity {
 
         // get species info
         Cursor cursor = db.getSpeiciesData(id);
-
         if (cursor.isAfterLast()) {
             return;
         }
@@ -52,55 +51,35 @@ public class Detail extends ActionBarActivity {
         String state = setting.getString("state", "NY");
         Log.e("AREA", state);
 
-        // get season
-        cursor = db.getSeason(speciesName, state);
-        if (cursor.isAfterLast()) {
-            return;
-        }
-
-        int seasonId = cursor.getInt(cursor.getColumnIndex("SeasonId"));
-        String openDate = cursor.getString(cursor.getColumnIndex("OpenDate"));
-        String closeDate = cursor.getString(cursor.getColumnIndex("CloseDate"));
-
-        Log.e("CC", String.valueOf(seasonId));
-        Log.e("CC", openDate +  " " + closeDate);
-
         Calendar rightNow = Calendar.getInstance();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         String today = formatter.format(rightNow.getTime());
 
-        ImageView reg_icon = (ImageView) findViewById(R.id.icon_reg);
-        if (openDate.compareTo(today) <= 0 && today.compareTo(closeDate) <= 0) {
-            reg_icon.setImageResource(R.drawable.open);
-        } else {
-            reg_icon.setImageResource(R.drawable.close);
-        }
-
-        // convert season open date and close date to MMM d format
-        Calendar openCal = Calendar.getInstance();
-        Calendar closeCal = Calendar.getInstance();
-        try {
-            SimpleDateFormat seasonFormatter = new SimpleDateFormat("MMM d");
-
-            openCal.setTime(formatter.parse(openDate));
-            closeCal.setTime(formatter.parse(closeDate));
-
-            formatter.applyPattern("MMM d");
-            openDate = formatter.format(openCal.getTime());
-            closeDate = formatter.format(closeCal.getTime());
-        } catch (Exception e) {
-            System.out.println(e.toString());
-        }
-
-        // set season open and close date
-        TextView seasonView = (TextView) findViewById(R.id.season);
-        seasonView.setText(openDate + " -- " + closeDate);
-
-        cursor = db.getRule(seasonId);
+        // get season
+        cursor = db.getSeason(speciesName, state);
         ArrayList<String> ruleList = new ArrayList<String>();
-        while (!cursor.isAfterLast()) {
-            ruleList.add(cursor.getString(cursor.getColumnIndex("Rule")));
-            Log.e("RU", cursor.getString(cursor.getColumnIndex("Rule")));
+
+        boolean isSeasonOpen = false;
+        while(!cursor.isAfterLast()) {
+            int seasonId = cursor.getInt(cursor.getColumnIndex("SeasonId"));
+            Log.e("detail", String.valueOf(seasonId));
+            String openDate = cursor.getString(cursor.getColumnIndex("OpenDate"));
+            String closeDate = cursor.getString(cursor.getColumnIndex("CloseDate"));
+            if (closeDate.compareTo(today) >= 0) {
+                if (openDate.compareTo(today) <= 0 && today.compareTo(closeDate) <= 0) {
+                    isSeasonOpen = true;
+                }
+
+                ruleList.add(openDate + " ~ " + closeDate);
+
+                Cursor ruleCursor = db.getRule(seasonId);
+                while (!ruleCursor.isAfterLast()) {
+                    ruleList.add(ruleCursor.getString(ruleCursor.getColumnIndex("Rule")));
+                    Log.e("RULE", cursor.getString(ruleCursor.getColumnIndex("Rule")));
+                    ruleCursor.moveToNext();
+                }
+            }
+
             cursor.moveToNext();
         }
 
@@ -108,13 +87,50 @@ public class Detail extends ActionBarActivity {
         ListView ruleView = (ListView) findViewById(R.id.rules);
         ruleView.setAdapter(adaptor);
 
+        TextView season = (TextView) findViewById(R.id.season);
+        if (isSeasonOpen) {
+            season.setText("Open");
+        } else {
+            season.setText("Closed");
+        }
+
+//
+//        // convert season open date and close date to MMM d format
+//        Calendar openCal = Calendar.getInstance();
+//        Calendar closeCal = Calendar.getInstance();
+//        try {
+//            SimpleDateFormat seasonFormatter = new SimpleDateFormat("MMM d");
+//
+//            openCal.setTime(formatter.parse(openDate));
+//            closeCal.setTime(formatter.parse(closeDate));
+//
+//            formatter.applyPattern("MMM d");
+//            openDate = formatter.format(openCal.getTime());
+//            closeDate = formatter.format(closeCal.getTime());
+//        } catch (Exception e) {
+//            System.out.println(e.toString());
+//        }
+//
+//        // set season open and close date
+//        TextView seasonView = (TextView) findViewById(R.id.season);
+//        seasonView.setText(openDate + " -- " + closeDate);
+//
+//        cursor = db.getRule(seasonId);
+//
+//        while (!cursor.isAfterLast()) {
+//            ruleList.add(cursor.getString(cursor.getColumnIndex("Rule")));
+//            Log.e("RU", cursor.getString(cursor.getColumnIndex("Rule")));
+//            cursor.moveToNext();
+//        }
+
+
+
 //        if (!cursor.isAfterLast()) {
 //            TextView bag = (TextView) findViewById(R.id.bag_limit);
 //            bag.setText(cursor.getString(cursor.getColumnIndex("Rule")));
 //        }
 
-        if (true)
-            return;
+
         Cursor recordCursor = db.getRecord(id);
         if (!recordCursor.isAfterLast()) {
             // set weight

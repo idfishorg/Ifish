@@ -24,27 +24,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String RECORD_T = "Record_T";
 
-    // area table
+    // area table: id area
     public static final String CREATE_AREA_T = "CREATE TABLE " + AREA_T
             + " (AreaId INTEGER PRIMARY KEY AUTOINCREMENT, "
             + "Area TEXT)";
 
-    // species table
+    // species table: id, name, picture id
     public static final String CREATE_SPECIES_T = "CREATE TABLE " + SPECIES_T
             + " (SpeciesId INTEGER PRIMARY KEY AUTOINCREMENT, "
             + "SpeciesName TEXT, "
             + "Thumbnail INTEGER)";
 
-    // species area table
+    // species area table: id, area, species id,
     public static final String CREATE_AREA_SPECIES_T = "CREATE TABLE " + AREA_SPECIES_T
             + " (AreaSpeciesId INTEGER PRIMARY KEY AUTOINCREMENT,"
             + " AreaId INTEGER,"
             + " SpeciesId INTEGER,"
             + " FOREIGN KEY(SpeciesId) REFERENCES " + SPECIES_T + "(SpeciesId), "
-            + " FOREIGN KEY(AreaId) REFERENCES " + AREA_T +"(AreaId) "
+            + " FOREIGN KEY(AreaId) REFERENCES " + AREA_T + "(AreaId) "
             + ")";
 
-    // season table
+    // season table: seasonid, open date, close date, area species id,
     public static final String CREATE_SEASON_T = "CREATE TABLE " + SEASON_T
             + " (SeasonId INTEGER PRIMARY KEY AUTOINCREMENT, "
             + " OpenDate TEXT,"
@@ -53,7 +53,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + " FOREIGN KEY(AreaSpeciesId) REFERENCES " + AREA_SPECIES_T + "(AreaSpeciesId)"
             + ")";
 
-    // rule table
+    // rule table: id, rule, season id
     public static final String CREATE_RULE_T = "CREATE TABLE " + RULE_T
             + " (RuleId INTEGER PRIMARY KEY AUTOINCREMENT, "
             + "Rule TEXT,"
@@ -61,17 +61,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + "FOREIGN KEY(SeasonId) REFERENCES " + SEASON_T + "(SeasonId) "
             + ")";
 
-//    regulation table
-//    public static final String CREATE_REGULATION_T = "CREATE TABLE " + REGULATION_T
-//            + " (RegulationId INTEGER PRIMARY KEY AUTOINCREMENT, "
-//            + "SpeciesId INTERGER, "
-//            + "AreaId, INTEGER, "
-//            + "SeasonId INTEGER, "
-//            + "FOREIGN KEY(SpeciesId) REFERENCES " + SPECIES_T + "(SpeciesId), "
-//            + "FOREIGN KEY(AreaId) REFERENCES " + AREA_T +"(AreaId), "
-//            + "FOREIGN KEY(SeasonId) REFERENCES " + SEASON_T +"(SeasonId)"
-//            + ")";
-
+    // record table:
     public static final String CREATE_RECORD_T = "CREATE TABLE " + RECORD_T
             + " (RecordId INTEGER PRIMARY KEY AUTOINCREMENT, "
             + "SpeciesId INTEGER, "
@@ -81,44 +71,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + "Angler TEXT, "
             + "FOREIGN KEY(SpeciesId) REFERENCES " + SPECIES_T + "(SpeciesId)"
             + ")";
-
-//    // regulation table
-//    public static final String SPECIES_ID = "species_id";
-//    public static final String TYPE_ID = "type_id";
-//    public static final String OPEN_DATE = "open_date";
-//    public static final String CLOSE_DATE = "close_date";
-//    public static final String MIN_SIZE = "min_size";
-//    public static final String BAG_LIMIT = "bag_limit";
-
-//    public static final String CREATE_REGULATION_TABLE = "CREATE TABLE " + REGULATION_TABLE
-//            + "(" + SPECIES_ID + " INTEGER, "
-//            + TYPE_ID + " INTEGER, "
-//            + OPEN_DATE + " TEXT, "
-//            + CLOSE_DATE + " TEXT, "
-//            + MIN_SIZE + " REAL, "
-//            + BAG_LIMIT + " INTEGER, "
-//            + "PRIMARY KEY(" + SPECIES_ID + ", " + TYPE_ID + "), "
-//            + "FOREIGN KEY(" + SPECIES_ID + ") REFERENCES " + SPECIES_TABLE + "(_id), "
-//            + "FOREIGN KEY(" + TYPE_ID + ") REFERENCES " + TYPE_TABLE_NAME +"(_id) "
-//            + ")";
-
-    // record table
-//    public static final String WEIGHT = "weight";
-//    public static final String RECORD_DATE = "record_date";
-//    public static final String LOCATION = "location";
-//    public static final String ANGLER = "angler";
-//
-//    public static final String CREATE_RECORD_TABLE = "CREATE TABLE " + RECORD_TABLE_NAME
-//            + "(_id INTEGER PRIMARY KEY AUTOINCREMENT, "
-//            + SPECIES_ID +" INTEGER, "
-//            + WEIGHT + " INTEGER, "
-//            + RECORD_DATE + " TEXT, "
-//            + LOCATION + " TEXT, "
-//            + ANGLER + " TEXT, "
-//            + "FOREIGN KEY(" + SPECIES_ID + ") REFERENCES " + SPECIES_TABLE + "(_id)"
-//            + ")";
-
-
 
     DatabaseHelper(Context context) {
         super(context, DB_NAME, null, 1);
@@ -185,14 +137,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(
                 "SELECT SeasonId, OpenDate, CloseDate FROM "
-                    + " Season_T INNER JOIN AreaSpecies_T "
-                    + " ON Season_T.AreaSpeciesId = AreaSpecies_T.AreaSpeciesId "
-                    + " WHERE SpeciesId = " + String.valueOf(speciesId) + " "
-                    + " AND AreaId = " + String.valueOf(areaId),
+                        + " Season_T INNER JOIN AreaSpecies_T "
+                        + " ON Season_T.AreaSpeciesId = AreaSpecies_T.AreaSpeciesId "
+                        + " WHERE SpeciesId = " + String.valueOf(speciesId) + " "
+                        + " AND AreaId = " + String.valueOf(areaId),
                 null
         );
 
-        if(cursor != null) {
+        if (cursor != null) {
             Log.e("DB", "null cursor");
             cursor.moveToNext();
         }
@@ -231,9 +183,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor getRecord(int species_id) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(
-                "SELECT _id, weight, record_date, location, angler" +
-                        " FROM record " +
-                        " WHERE species_id = " + String.valueOf(species_id), null
+                "SELECT recordid, weight, recorddate, location, angler" +
+                        " FROM Record_T " +
+                        " WHERE speciesid = " + String.valueOf(species_id), null
         );
 
         if (cursor != null) {
@@ -296,7 +248,37 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
+    public void insertRegulation(String speaciesName,
+                                 String area,
+                                 String openDate,
+                                 String closeDate,
+                                 String [] rules) {
+        int areaSpeciesId = getAreaSpeciesId(area, speaciesName);
+        Log.e("EE", String.valueOf(areaSpeciesId));
+        if (areaSpeciesId == 0) {
+            return;
+        }
 
+        // season
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("AreaSpeciesId", areaSpeciesId);
+        contentValues.put("OpenDate", openDate);
+        contentValues.put("CloseDate", closeDate);
+        SQLiteDatabase db = getWritableDatabase();
+        // todo: insert AreaSpeciesId
+        long seasonId = db.insert(SEASON_T, null, contentValues);
+
+        // rules
+        for (int i = 0; i < rules.length; ++i) {
+            contentValues.clear();
+            contentValues.put("Rule", rules[i]);
+            contentValues.put("SeasonId", seasonId);
+            db.insert(RULE_T, null, contentValues);
+        }
+
+        db.close();
+        return;
+    }
 
     public void insertRegulation(String speaciesName,
                                  String area,
@@ -328,7 +310,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // bag rule
         contentValues.clear();
-        String bagRule = String.valueOf(bag_limit);
+        String bagRule = "Bag Limit: " + String.valueOf(bag_limit);
         contentValues.put("Rule", bagRule);
         contentValues.put("SeasonId", seasonId);
         db.insert(RULE_T, null, contentValues);
@@ -353,7 +335,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         cursor.moveToNext();
 
-        if(cursor.isAfterLast())
+        if (cursor.isAfterLast())
             return 0;
 
         return cursor.getInt(cursor.getColumnIndex("SeasonId"));
@@ -387,7 +369,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         cursor.moveToNext();
 
-        if(cursor.isAfterLast())
+        if (cursor.isAfterLast())
             return 0;
 
         return cursor.getInt(cursor.getColumnIndex("AreaSpeciesId"));
@@ -406,7 +388,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         cursor.moveToNext();
 
-        if(cursor.isAfterLast())
+        if (cursor.isAfterLast())
             return 0;
 
         return cursor.getInt(cursor.getColumnIndex("AreaId"));
@@ -415,7 +397,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public int getSpeciesId(String speciesName) {
         SQLiteDatabase db = getReadableDatabase();
 
-        String q = "SELECT SpeciesId FROM " + SPECIES_T + " WHERE SpeciesName =\"" + speciesName +"\"";
+        String q = "SELECT SpeciesId FROM " + SPECIES_T + " WHERE SpeciesName =\"" + speciesName + "\"";
         Cursor cursor = db.rawQuery(q, null);
 
         if (cursor == null)
@@ -423,7 +405,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         cursor.moveToNext();
 
-        if(cursor.isAfterLast())
+        if (cursor.isAfterLast())
             return 0;
 
         return cursor.getInt(cursor.getColumnIndex("SpeciesId"));
@@ -441,7 +423,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return cursor;
     }
-
 
 
     public Cursor getAllSpecies(String area) {
@@ -465,93 +446,87 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void addSomeSpecies() {
         populateSpecies();
-
         populateAreas();
-
         populateSpeciesOfStates();
-
         populateRegulations();
-
-//        populateRecord();
 
         return;
     }
 
-    public void populateRegulations() {
-        // NY regulation
-        insertRegulation("Bass Striped",    "NY", "2016-04-15", "2016-12-31", 28, 1);
-        insertRegulation("Bluefish",        "NY", "2016-01-01", "2016-12-31", 12, 15);
-        insertRegulation("Bass Largemouth", "NY", "2016-06-17", "2016-11-30", 12, 5);
-        insertRegulation("Bass Smallmouth", "NY", "2016-06-17", "2016-11-30", 99999, 0);
-        insertRegulation("Flounder Summer", "NY", "2016-05-17", "2016-09-21", 18, 5);
-        insertRegulation("Flounder Winter", "NY", "2016-04-01", "2016-05-30", 12, 2);
-        insertRegulation("Tautog", "NY", "2016-10-05", "2016-12-14", 16, 4);
-        insertRegulation("Weakfish", "NY", "2016-01-01", "2016-12-31", 16, 1);
-        insertRegulation("Cod Atlantic", "NY", "2016-01-01", "2016-12-31", 22, 10);
-        insertRegulation("Cobia", "NY", "2016-01-01", "2016-12-31", 37, 2);
-    }
-
-    public void populateSpeciesOfStates() {
-        String[] speciesOfNY = {"Flounder Summer", "Flounder Winter", "Tautog", "Bluefish",
-            "Weakfish", "Cod Atlantic", "Pollock", "Haddock", "Bass Striped"};
-        for (int i = 0; i < speciesOfNY.length; i++) {
-            insertSpeciesArea(speciesOfNY[i], "NY");
-            insertSpeciesArea(speciesOfNY[i], "NJ");
+    private void populateSpeciesList(String [] species, String state) {
+        for (int i = 0; i < species.length; i++) {
+            insertSpeciesArea(species[i], state);
         }
     }
 
+    //    public static final String AMERICAN_EEL = "American Eel";
+    public static final String BASS_BLACK_SEA = "Bass Black Sea";
+    public static final String BASS_STRIPED = "Bass Striped";
+    public static final String BLUEFISH = "Bluefish";
+    public static final String COBIA = "Cobia";
+    public static final String DRUM_BLACK = "Drum Black";
+    public static final String DRUM_RED = "Drum Red";
+    public static final String COD_ATLANTIC = "Cod Atlantic";
+    public static final String FLOUNDER_SUMMER = "Flounder Summer";
+    public static final String FLOUNDER_WINTER = "Flounder Winter";
+    public static final String HADDOCK = "Haddock";
+    public static final String MACKEREL_KING = "Mackerel King";
+    public static final String MACKEREL_SPANISH = "Mackerel Spanish";
+    public static final String POLLOCK = "Pollock";
+    public static final String SCUP = "Scup";
+    public static final String TAUTOG = "Tautog";
+    public static final String WEAKFISH = "Weakfish";
+
     public void populateSpecies() {
-        insertSpecies("Flounder Summer", R.drawable.flounder_summer);
-        insertSpecies("Flounder Winter", R.drawable.flounder_winter);
-        insertSpecies("Tautog", R.drawable.tautog);
-        insertSpecies("Bluefish", R.drawable.bluefish);
-        insertSpecies("Weakfish", R.drawable.weakfish);
-        insertSpecies("Cod Atlantic", R.drawable.cod_atlantic);
-        insertSpecies("Pollock", R.drawable.pollock);
-        insertSpecies("Haddock", R.drawable.haddock);
-        insertSpecies("Bass Striped", R.drawable.bass_striped);
-        insertSpecies("Drum Red", R.drawable.drum_red);
-        insertSpecies("Mackerel Spanish", R.drawable.mackerel_span);
-        insertSpecies("Mackerel King", R.drawable.mackerel_king);
-        insertSpecies("Cobia", R.drawable.cobia);
+//        insertSpecies(AMERICAN_EEL, );
+        insertSpecies(BASS_BLACK_SEA, R.drawable.bass_black_sea);
         insertSpecies("Bass Largemouth", R.drawable.bass_large_mouth);
         insertSpecies("Bass Smallmouth", R.drawable.bass_small_mouth);
-
-        //        insertSpecies("Bass White", 10, 40, R.drawable.bass_white);
-//        insertSpecies("Bass Largemouth", 11, 12, R.drawable.bass_large_mouth);
-//        insertSpecies("Bass Smallmouth", 11, 23, R.drawable.bass_small_mouth);
-//        insertSpecies("Seabass Black", 12, 12, R.drawable.bass_black_sea);
-//        insertSpecies("Carp Common", 1, 1, R.drawable.carp_common);
-//        insertSpecies("Catfish Channel", 1, 1, R.drawable.catfish_channel);
-//        insertSpecies("Cod Pacific", 2, 2, R.drawable.cod_pacific);
-//        insertSpecies("Flounder Summer", 1, 1, R.drawable.flounder_summer);
-//        insertSpecies("Flounder Winter", 1, 1, R.drawable.flounder_winter);
-//        insertSpecies("Gar Alligator", 1, 1, R.drawable.gar_alligator);
-//        insertSpecies("Gar Longnose",1,1, R.drawable.gar_longnose);
-//        insertSpecies("Gar Shortnose",1,1, R.drawable.gar_shortnose);
-//        insertSpecies("Grouper Black", 1,1,R.drawable.grouper_black);
-//        insertSpecies("Grouper Red",1,1, R.drawable.grouper_red);
-//        insertSpecies("Salmon Alantic ",1,1,R.drawable.salmon_atlantic);
-//        insertSpecies("Salmon Chinook",1,1,R.drawable.salmon_chinook);
-//        insertSpecies("Salmon Coho",1,1,R.drawable.salmon_coho);
-//        insertSpecies("Salmon Pink",1,1,R.drawable.salmon_pink);
-//        insertSpecies("Salmon Sockeye",1,1, R.drawable.salmon_sockeye);
-//        insertSpecies("Sauger",1,1,R.drawable.sauger);
-//        insertSpecies("Seabass Blackfin",1,1,R.drawable.seabass_blackfin);
-//        insertSpecies("Seatrout Spotted",1,1,R.drawable.seatrout_spotted);
-//        insertSpecies("Shad American",1,1,R.drawable.shad_american);
-//        insertSpecies("Shark Blue", 1,1,R.drawable.shark_blue);
-//        insertSpecies("Shark Mako",1,1,R.drawable.shark_mako);
-//        insertSpecies("Shark Tiger",1,1, R.drawable.shark_tiger);
-//        insertSpecies("Shark White",1,1, R.drawable.shark_white);
-//        insertSpecies("Snapper Mutton",1,1,R.drawable.snapper_mutton);
-//        insertSpecies("Snapper Red",1,1,R.drawable.snapper_red);
-//        insertSpecies("Sunfish Redear",1,1,R.drawable.sunfish_readear);
-//        insertSpecies("Sunfish Redbreast",1,1, R.drawable.sunfish_redbreast);
-//        insertSpecies("Swordfish",1,1,R.drawable.swordfish);
-//        insertSpecies("Taimen",1,1,R.drawable.taimen);
-//        insertSpecies("Tarpon",1,1,R.drawable.tarpon);
-//        insertSpecies("Trout Rainbow",1,1,R.drawable.trout_rainbow);
+        insertSpecies(BASS_STRIPED, R.drawable.bass_striped);
+        insertSpecies("Bass White", R.drawable.bass_white);
+        insertSpecies(BLUEFISH, R.drawable.bluefish);
+        insertSpecies("Carp Common", R.drawable.carp_common);
+        insertSpecies("Catfish Channel", R.drawable.catfish_channel);
+        insertSpecies(COBIA, R.drawable.cobia);
+        insertSpecies(COD_ATLANTIC, R.drawable.cod_atlantic);
+        insertSpecies("Cod Pacific", R.drawable.cod_pacific);
+        insertSpecies(DRUM_RED, R.drawable.drum_red);
+        insertSpecies(DRUM_BLACK, R.drawable.drum_black);
+        insertSpecies(FLOUNDER_SUMMER, R.drawable.flounder_summer);
+        insertSpecies(FLOUNDER_WINTER, R.drawable.flounder_winter);
+        insertSpecies("Gar Alligator", R.drawable.gar_alligator);
+        insertSpecies("Gar Longnose", R.drawable.gar_longnose);
+        insertSpecies("Gar Shortnose", R.drawable.gar_shortnose);
+        insertSpecies("Grouper Black",R.drawable.grouper_black);
+        insertSpecies("Grouper Red", R.drawable.grouper_red);
+        insertSpecies(HADDOCK, R.drawable.haddock);
+        insertSpecies(MACKEREL_KING, R.drawable.mackerel_king);
+        insertSpecies(MACKEREL_SPANISH, R.drawable.mackerel_span);
+        insertSpecies(POLLOCK, R.drawable.pollock);
+        insertSpecies("Salmon Alantic ",R.drawable.salmon_atlantic);
+        insertSpecies("Salmon Chinook",R.drawable.salmon_chinook);
+        insertSpecies("Salmon Coho",R.drawable.salmon_coho);
+        insertSpecies("Salmon Pink",R.drawable.salmon_pink);
+        insertSpecies("Salmon Sockeye", R.drawable.salmon_sockeye);
+        insertSpecies("Sauger",R.drawable.sauger);
+        insertSpecies(SCUP, R.drawable.scup);
+        insertSpecies("Seabass Blackfin",R.drawable.seabass_blackfin);
+        insertSpecies("Seatrout Spotted",R.drawable.seatrout_spotted);
+        insertSpecies("Shad American",R.drawable.shad_american);
+        insertSpecies("Shark Blue",R.drawable.shark_blue);
+        insertSpecies("Shark Mako",R.drawable.shark_mako);
+        insertSpecies("Shark Tiger", R.drawable.shark_tiger);
+        insertSpecies("Shark White", R.drawable.shark_white);
+        insertSpecies("Snapper Mutton",R.drawable.snapper_mutton);
+        insertSpecies("Snapper Red",R.drawable.snapper_red);
+        insertSpecies("Sunfish Redear",R.drawable.sunfish_readear);
+        insertSpecies("Sunfish Redbreast", R.drawable.sunfish_redbreast);
+        insertSpecies("Swordfish",R.drawable.swordfish);
+        insertSpecies("Taimen",R.drawable.taimen);
+        insertSpecies("Tarpon",R.drawable.tarpon);
+        insertSpecies(TAUTOG, R.drawable.tautog);
+        insertSpecies("Trout Rainbow",R.drawable.trout_rainbow);
+        insertSpecies(WEAKFISH, R.drawable.weakfish);
     }
 
     public void populateAreas() {
@@ -561,19 +536,114 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA",
                 "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV",
                 "WI", "WY"};
+
         for (int i = 0; i < areas.length; i++) {
             insertArea(areas[i]);
         }
     }
 
+    public void populateSpeciesOfStates() {
+        String[] speciesOfNY = {
+                BASS_BLACK_SEA,
+                BASS_STRIPED,
+                BLUEFISH,
+                COBIA,
+                COD_ATLANTIC,
+                DRUM_RED,
+                FLOUNDER_SUMMER,
+                FLOUNDER_WINTER,
+                HADDOCK,
+                MACKEREL_SPANISH,
+                MACKEREL_KING,
+                POLLOCK,
+                SCUP,
+                TAUTOG,
+                WEAKFISH,
+        };
+        populateSpeciesList(speciesOfNY, "NY");
+
+        String[] speciesOfNJ = {
+//                AMERICAN_EEL,
+                BASS_BLACK_SEA,
+                BASS_STRIPED,
+                BLUEFISH,
+                COBIA,
+                COD_ATLANTIC,
+                DRUM_BLACK,
+                DRUM_RED,
+                FLOUNDER_SUMMER,
+                FLOUNDER_WINTER,
+                HADDOCK,
+                MACKEREL_SPANISH,
+                MACKEREL_KING,
+                SCUP,
+                POLLOCK,
+                TAUTOG,
+                WEAKFISH,
+        };
+        populateSpeciesList(speciesOfNJ, "NJ");
+    }
+
+    public static final String MINI_LEN = "Minimum Length: ";
+    public static final String MAX_LEN =  "Maximum Length: ";
+    public static final String BAG_LIMIT = "Bag Limit: ";
+    public static final String NO_MINI_LEN = "No minimum size";
+    public static final String NO_BAG_LIMIT = "No bag limit";
+
+    public void populateRegulations() {
+        // regulations
+        // Species State Open, Close, Minimum Size, Bag Limit
+
+        // NY regulation ------------------------------------------------------------------------
+        insertRegulation(BASS_BLACK_SEA,  "NY", "2016-07-15", "2016-10-31", new String[] {MINI_LEN + "14\"", BAG_LIMIT + 8});
+        insertRegulation(BASS_BLACK_SEA,  "NY", "2016-11-01", "2016-12-31", new String[] {MINI_LEN + "14\"", BAG_LIMIT + 10});
+        insertRegulation(BASS_STRIPED,    "NY", "2016-04-15", "2016-12-31", new String[] {MINI_LEN + "28\"", BAG_LIMIT + 1});
+        insertRegulation(BLUEFISH,        "NY", "2016-01-01", "2016-12-31", new String[] {"No minimum size for first 10 fish", "12\" TL for the next 5", BAG_LIMIT + 15, "No more than 10 of which shall be less than 12\" TL"});
+        insertRegulation(COBIA,           "NY", "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "37\"", BAG_LIMIT + 2});
+        insertRegulation(COD_ATLANTIC,    "NY", "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "22\"", BAG_LIMIT + 10});
+        insertRegulation(DRUM_RED,        "NY", "2016-01-01", "2016-12-31", new String[] {MAX_LEN  + "27\"", NO_BAG_LIMIT});
+        insertRegulation(FLOUNDER_SUMMER, "NY", "2016-05-17", "2016-09-21", new String[] {MINI_LEN + "18\"", BAG_LIMIT + 5});
+        insertRegulation(FLOUNDER_WINTER, "NY", "2016-04-01", "2016-05-30", new String[] {MINI_LEN + "12\"", BAG_LIMIT + 2});
+        insertRegulation(HADDOCK,         "NY", "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "18\"", NO_BAG_LIMIT});
+        insertRegulation(MACKEREL_SPANISH,"NY", "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "14\"", BAG_LIMIT + 15});
+        insertRegulation(MACKEREL_KING,   "NY", "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "23\"", BAG_LIMIT + 3});
+        insertRegulation(POLLOCK,         "NY", "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "19\"", NO_BAG_LIMIT});
+        insertRegulation(SCUP,            "NY", "2016-05-01", "2016-12-31", new String[] {MINI_LEN + "10\"", BAG_LIMIT + 30});
+        insertRegulation(TAUTOG,          "NY", "2016-10-05", "2016-12-14", new String[] {MINI_LEN + "16\"", BAG_LIMIT + 4});
+        insertRegulation(WEAKFISH,        "NY", "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "16\"", BAG_LIMIT + 1});
+//        insertRegulation("Bass Largemouth", "NY", "2016-06-17", "2016-11-30", 12, 5);
+//        insertRegulation("Bass Smallmouth", "NY", "2016-06-17", "2016-11-30", 99999, 0);
+
+        // NJ regulation ------------------------------------------------------------------------
+        insertRegulation(BASS_BLACK_SEA,   "NJ", "2016-05-23", "2016-06-19", new String[] {MINI_LEN + "12.5\"", BAG_LIMIT + 10});
+        insertRegulation(BASS_BLACK_SEA,   "NJ", "2016-07-01", "2016-08-31", new String[] {MINI_LEN + "12.5\"", BAG_LIMIT + 2});
+        insertRegulation(BASS_BLACK_SEA,   "NJ", "2016-10-22", "2016-12-31", new String[] {MINI_LEN + "13\"", BAG_LIMIT + 5});
+        insertRegulation(BASS_STRIPED,     "NJ", "2016-05-01", "2016-12-31", new String[] {"1 fish at 28 inches to less than 43 inches", "1 fish at 43 inches or greater"});
+        insertRegulation(BLUEFISH,         "NJ", "2016-01-01", "2016-12-31", new String[] {NO_MINI_LEN, BAG_LIMIT + 15});
+        insertRegulation(COD_ATLANTIC,     "NJ", "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "19\"", NO_BAG_LIMIT});
+        insertRegulation(DRUM_BLACK,       "NJ", "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "13\"", BAG_LIMIT + 1});
+        insertRegulation(FLOUNDER_SUMMER,  "NJ", "2016-05-21", "2016-09-25", new String[] {MINI_LEN + "18\"", BAG_LIMIT + 5});
+        insertRegulation(FLOUNDER_WINTER,  "NJ", "2016-03-01", "2016-12-31", new String[] {MINI_LEN + "12\"", BAG_LIMIT + 2});
+        insertRegulation(HADDOCK,          "NJ", "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "21\"", NO_BAG_LIMIT});
+        insertRegulation(POLLOCK,          "NJ", "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "19\"", NO_BAG_LIMIT});
+        insertRegulation(TAUTOG,           "NJ", "2016-01-01", "2016-02-28", new String[] {MINI_LEN + "15\"", BAG_LIMIT + 4});
+        insertRegulation(TAUTOG,           "NJ", "2016-04-01", "2016-04-30", new String[] {MINI_LEN + "15\"", BAG_LIMIT + 4});
+        insertRegulation(TAUTOG,           "NJ", "2016-07-17", "2016-11-15", new String[] {MINI_LEN + "15\"", BAG_LIMIT + 1});
+        insertRegulation(TAUTOG,           "NJ", "2016-11-16", "2016-12-31", new String[] {MINI_LEN + "15\"", BAG_LIMIT + 6});
+        insertRegulation(WEAKFISH,         "NJ", "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "13\"", BAG_LIMIT + 1});
+    }
+
     public void populateRecord() {
         // world record
-        insertRecord("Bass Striped",     1310, "2011-08-04", "Long Island Sound, Westbrook, Connecticut, USA", "Gregory Myerson");
-        insertRecord("Bluefish",         508,  "1972-01-30", "Hatteras, North Carolina, USA", "James Hussey");
-        insertRecord("Bass Largemouth",  356,  "1932-06-02", "Montgomery Lake, Georgia, USA", "George W. Perry");
-        insertRecord("Mackerel Spanish", 206,  "1987-11-04", "Ocracoke Inlet, North Carolina, USA", "Robert Cranton");
-        insertRecord("Mackerel King",    1488, "1999-04-18", "San Juan, Puerto Rico", "Steve Graulau");
-        insertRecord("Cobia",            2169, "1985-07-09", "Shark Bay, W.A., Australia", "Peter Goulding");
+        insertRecord(BASS_BLACK_SEA, 164, "2000-01-01", "Virginia Beach, Virginia, USA", "Allan Paschall");
+        insertRecord(BASS_STRIPED, 1310, "2011-08-04", "Long Island Sound, Westbrook, Connecticut, USA", "Gregory Myerson");
+        insertRecord("Bass Largemouth", 356, "1932-06-02", "Montgomery Lake, Georgia, USA", "George W. Perry");
+        insertRecord(BLUEFISH, 508, "1972-01-30", "Hatteras, North Carolina, USA", "James Hussey");
+        insertRecord(DRUM_BLACK, 1809, "1975-09-15", "Lewes, Delaware, USA", "Gerald Townsend");
+        insertRecord("Mackerel Spanish", 206, "1987-11-04", "Ocracoke Inlet, North Carolina, USA", "Robert Cranton");
+        insertRecord("Mackerel King", 1488, "1999-04-18", "San Juan, Puerto Rico", "Steve Graulau");
+        insertRecord("Cobia", 2169, "1985-07-09", "Shark Bay, W.A., Australia", "Peter Goulding");
+        insertRecord(WEAKFISH, 316, "2008-05-07", "Staten Island, New York, USA", "Dave Alu");
     }
 
 }

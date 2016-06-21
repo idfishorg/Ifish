@@ -105,8 +105,9 @@ public class MainActivity extends ActionBarActivity {
         speciesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Species species = (Species) parent.getItemAtPosition(position);
                 Intent i = new Intent(view.getContext(), Detail.class);
-                i.putExtra("ID", String.valueOf(position + 1));
+                i.putExtra("ID", String.valueOf(species.getId()));
                 startActivity(i);
             }
         });

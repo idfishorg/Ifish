@@ -138,8 +138,6 @@
         android:layout_alignLeft="@id/record_date"
         android:layout_below="@id/record_date"/>
 
-
-
     <!--<TextView-->
         <!--style="@style/regular"-->
         <!--android:id="@+id/record_person"-->
