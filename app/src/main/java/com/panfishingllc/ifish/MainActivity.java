@@ -1,19 +1,27 @@
 package com.panfishingllc.ifish;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.support.v7.app.ActionBarActivity;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.util.Log;
+import android.content.SharedPreferences.Editor;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -85,9 +93,11 @@ public class MainActivity extends ActionBarActivity {
         if (false)
             return;
 
-        SharedPreferences setting = PreferenceManager.getDefaultSharedPreferences(this);
-        state = setting.getString("state", "NY");
-        Log.e("AAA", state);
+        // get state
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        state = preferences.getString("state", "NEW YORK");
+
+        // get all species of state
         Cursor cursor = db.getAllSpecies(state);
 
         ArrayList<Species> speciesList = new ArrayList<Species>();
@@ -114,17 +124,6 @@ public class MainActivity extends ActionBarActivity {
 
 
     }
-
-    //called when the preferences are changed in any way
-//    @Override
-//    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,String key) {
-//        if ("key" == "state") {
-//            Log.e("AA", sharedPreferences.getString("state", "CA"));
-//        }
-////        txtMessage1.setText(prefs.getString("custom_message_1", ""));
-////        txtMessage2.setText(prefs.getString("custom_message_2", ""));
-//    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -156,15 +155,65 @@ public class MainActivity extends ActionBarActivity {
                 Intent i = new Intent(this, SettingsActivity.class);
                 startActivity(i);
                 break;
+            case R.id.use_my_location:
+                getCurrentLocation();
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
         return true;
-
-//
-//      return super.onOptionsItemSelected(item);
     }
 
+    private void getCurrentLocation() {
+        Log.e("LOC", "in getCurrentLocation");
+        LocationManager locationManager =
+                (LocationManager) this.getSystemService(getApplicationContext().LOCATION_SERVICE);
 
 
+        // use network provider
+        String locationProvider = LocationManager.GPS_PROVIDER;
+
+        Location last = locationManager.getLastKnownLocation(locationProvider);
+
+        Geocoder gcd = new Geocoder(getApplicationContext(), Locale.getDefault());
+        List<Address> addresses;
+        try {
+            addresses = gcd.getFromLocation(last.getLatitude(),
+                    last.getLongitude(), 1);
+
+            Log.e("ADD", addresses.toString());
+            if (addresses.size() > 0) {
+                String state = addresses.get(0).getAdminArea();
+                SharedPreferences setting = PreferenceManager.getDefaultSharedPreferences(this);
+                Editor editor = setting.edit();
+                editor.putString("state", state.toUpperCase());
+                editor.commit();
+                Log.e("ADD", state);
+                Log.e("ADD", setting.getString("state", "NY"));
+
+//                String cityName = addresses.get(0).getLocality();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Log.e("LOC", last.toString());
+//        LocationListener locationListener = new LocationListener() {
+//            public void onLocationChanged(Location location) {
+//                // Called when a new location is found by the network location provider.
+//                Log.e("LOC", location.toString());
+////                locationManager.remo
+//            }
+//
+//            public void onStatusChanged(String provider, int status, Bundle extras) {}
+//
+//            public void onProviderEnabled(String provider) {}
+//
+//            public void onProviderDisabled(String provider) {}
+//        };
+//
+//        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+
+        return;
+    }
 }

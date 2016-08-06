@@ -468,13 +468,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DRUM_RED = "Drum Red";
     public static final String COD_ATLANTIC = "Cod Atlantic";
     public static final String FLOUNDER_SUMMER = "Flounder Summer";
+    public static final String FLOUNDER_YELLOWTAIL = "Flounder Yellowtail";
     public static final String FLOUNDER_WINTER = "Flounder Winter";
     public static final String HADDOCK = "Haddock";
     public static final String MACKEREL_KING = "Mackerel King";
     public static final String MACKEREL_SPANISH = "Mackerel Spanish";
+    public static final String MENHADEN_ATLANTIC = "Menhaden Atlantic";
     public static final String POLLOCK = "Pollock";
+    public static final String SHAD_AMERICAN = "Shad American";
+    public static final String SHAD_HICKORY = "Shad Hickory";
     public static final String SCUP = "Scup";
+    public static final String STURGEON_ATLANTIC = "Sturgeon Atlantic";
     public static final String TAUTOG = "Tautog";
+    public static final String TOADFISH_OYSTER = "Toadfish Oyster";
     public static final String WEAKFISH = "Weakfish";
 
     public void populateSpecies() {
@@ -493,6 +499,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         insertSpecies(DRUM_RED, R.drawable.drum_red);
         insertSpecies(DRUM_BLACK, R.drawable.drum_black);
         insertSpecies(FLOUNDER_SUMMER, R.drawable.flounder_summer);
+        insertSpecies(FLOUNDER_YELLOWTAIL, R.drawable.flounder_yellowtail);
         insertSpecies(FLOUNDER_WINTER, R.drawable.flounder_winter);
         insertSpecies("Gar Alligator", R.drawable.gar_alligator);
         insertSpecies("Gar Longnose", R.drawable.gar_longnose);
@@ -502,6 +509,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         insertSpecies(HADDOCK, R.drawable.haddock);
         insertSpecies(MACKEREL_KING, R.drawable.mackerel_king);
         insertSpecies(MACKEREL_SPANISH, R.drawable.mackerel_span);
+        insertSpecies(MENHADEN_ATLANTIC, R.drawable.menhaden_atlantic);
         insertSpecies(POLLOCK, R.drawable.pollock);
         insertSpecies("Salmon Alantic ",R.drawable.salmon_atlantic);
         insertSpecies("Salmon Chinook",R.drawable.salmon_chinook);
@@ -512,7 +520,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         insertSpecies(SCUP, R.drawable.scup);
         insertSpecies("Seabass Blackfin",R.drawable.seabass_blackfin);
         insertSpecies("Seatrout Spotted",R.drawable.seatrout_spotted);
-        insertSpecies("Shad American",R.drawable.shad_american);
+        insertSpecies(SHAD_AMERICAN, R.drawable.shad_american);
+        insertSpecies(SHAD_HICKORY, R.drawable.shad_hickory);
         insertSpecies("Shark Blue",R.drawable.shark_blue);
         insertSpecies("Shark Mako",R.drawable.shark_mako);
         insertSpecies("Shark Tiger", R.drawable.shark_tiger);
@@ -521,10 +530,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         insertSpecies("Snapper Red",R.drawable.snapper_red);
         insertSpecies("Sunfish Redear",R.drawable.sunfish_readear);
         insertSpecies("Sunfish Redbreast", R.drawable.sunfish_redbreast);
+        insertSpecies(STURGEON_ATLANTIC, R.drawable.sturgeon_atlantic);
         insertSpecies("Swordfish",R.drawable.swordfish);
         insertSpecies("Taimen",R.drawable.taimen);
         insertSpecies("Tarpon",R.drawable.tarpon);
         insertSpecies(TAUTOG, R.drawable.tautog);
+        insertSpecies(TOADFISH_OYSTER, R.drawable.toadfish_oyster);
         insertSpecies("Trout Rainbow",R.drawable.trout_rainbow);
         insertSpecies(WEAKFISH, R.drawable.weakfish);
     }
@@ -533,7 +544,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String[] areas = {"AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE",
                 "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA",
                 "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV",
-                "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA",
+                "NH", "NEW JERSEY", "NM", "NEW YORK", "NC", "ND", "OH", "OK", "OR", "PA",
                 "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV",
                 "WI", "WY"};
 
@@ -551,16 +562,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COD_ATLANTIC,
                 DRUM_RED,
                 FLOUNDER_SUMMER,
+                FLOUNDER_YELLOWTAIL,
                 FLOUNDER_WINTER,
                 HADDOCK,
                 MACKEREL_SPANISH,
                 MACKEREL_KING,
+                MENHADEN_ATLANTIC,
                 POLLOCK,
+                SHAD_AMERICAN,
+                SHAD_HICKORY,
                 SCUP,
+                STURGEON_ATLANTIC,
                 TAUTOG,
+                TOADFISH_OYSTER,
                 WEAKFISH,
         };
-        populateSpeciesList(speciesOfNY, "NY");
+        populateSpeciesList(speciesOfNY, "NEW YORK");
 
         String[] speciesOfNJ = {
 //                AMERICAN_EEL,
@@ -581,7 +598,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 TAUTOG,
                 WEAKFISH,
         };
-        populateSpeciesList(speciesOfNJ, "NJ");
+        populateSpeciesList(speciesOfNJ, "NEW JERSEY");
     }
 
     public static final String MINI_LEN = "Minimum Length: ";
@@ -595,42 +612,53 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Species State Open, Close, Minimum Size, Bag Limit
 
         // NY regulation ------------------------------------------------------------------------
-        insertRegulation(BASS_BLACK_SEA,  "NY", "2016-07-15", "2016-10-31", new String[] {MINI_LEN + "14\"", BAG_LIMIT + 8});
-        insertRegulation(BASS_BLACK_SEA,  "NY", "2016-11-01", "2016-12-31", new String[] {MINI_LEN + "14\"", BAG_LIMIT + 10});
-        insertRegulation(BASS_STRIPED,    "NY", "2016-04-15", "2016-12-31", new String[] {MINI_LEN + "28\"", BAG_LIMIT + 1});
-        insertRegulation(BLUEFISH,        "NY", "2016-01-01", "2016-12-31", new String[] {"No minimum size for first 10 fish", "12\" TL for the next 5", BAG_LIMIT + 15, "No more than 10 of which shall be less than 12\" TL"});
-        insertRegulation(COBIA,           "NY", "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "37\"", BAG_LIMIT + 2});
-        insertRegulation(COD_ATLANTIC,    "NY", "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "22\"", BAG_LIMIT + 10});
-        insertRegulation(DRUM_RED,        "NY", "2016-01-01", "2016-12-31", new String[] {MAX_LEN  + "27\"", NO_BAG_LIMIT});
-        insertRegulation(FLOUNDER_SUMMER, "NY", "2016-05-17", "2016-09-21", new String[] {MINI_LEN + "18\"", BAG_LIMIT + 5});
-        insertRegulation(FLOUNDER_WINTER, "NY", "2016-04-01", "2016-05-30", new String[] {MINI_LEN + "12\"", BAG_LIMIT + 2});
-        insertRegulation(HADDOCK,         "NY", "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "18\"", NO_BAG_LIMIT});
-        insertRegulation(MACKEREL_SPANISH,"NY", "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "14\"", BAG_LIMIT + 15});
-        insertRegulation(MACKEREL_KING,   "NY", "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "23\"", BAG_LIMIT + 3});
-        insertRegulation(POLLOCK,         "NY", "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "19\"", NO_BAG_LIMIT});
-        insertRegulation(SCUP,            "NY", "2016-05-01", "2016-12-31", new String[] {MINI_LEN + "10\"", BAG_LIMIT + 30});
-        insertRegulation(TAUTOG,          "NY", "2016-10-05", "2016-12-14", new String[] {MINI_LEN + "16\"", BAG_LIMIT + 4});
-        insertRegulation(WEAKFISH,        "NY", "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "16\"", BAG_LIMIT + 1});
-//        insertRegulation("Bass Largemouth", "NY", "2016-06-17", "2016-11-30", 12, 5);
-//        insertRegulation("Bass Smallmouth", "NY", "2016-06-17", "2016-11-30", 99999, 0);
+        String NY = "NEW YORK";
+        insertRegulation(BASS_BLACK_SEA,  NY, "2016-07-15", "2016-10-31", new String[] {MINI_LEN + "14\"", BAG_LIMIT + 8});
+        insertRegulation(BASS_BLACK_SEA,  NY, "2016-11-01", "2016-12-31", new String[] {MINI_LEN + "14\"", BAG_LIMIT + 10});
+        insertRegulation(BASS_STRIPED,    NY, "2016-04-15", "2016-12-31", new String[] {"Marine waters (South of George Washington Bridge)", MINI_LEN + "28\"", BAG_LIMIT + 1});
+        insertRegulation(BASS_STRIPED,    NY, "2016-04-01", "2016-11-30", new String[] {"Hudson River (North of George Washington Bridge)", "18\" ~ 28\" or >40\"", BAG_LIMIT + 1});
+        insertRegulation(BLUEFISH,        NY, "2016-01-01", "2016-12-31", new String[] {"No minimum size for first 10 fish", "12\" TL for the next 5", BAG_LIMIT + 15, "No more than 10 of which shall be less than 12\" TL"});
+        insertRegulation(COBIA,           NY, "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "37\"", BAG_LIMIT + 2});
+        insertRegulation(COD_ATLANTIC,    NY, "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "22\"", BAG_LIMIT + 10});
+        insertRegulation(DRUM_RED,        NY, "2016-01-01", "2016-12-31", new String[] {MAX_LEN  + "27\"", NO_BAG_LIMIT});
+        insertRegulation(FLOUNDER_SUMMER, NY, "2016-05-17", "2016-09-21", new String[] {MINI_LEN + "18\"", BAG_LIMIT + 5});
+        insertRegulation(FLOUNDER_YELLOWTAIL, NY, "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "13\"", NO_BAG_LIMIT});
+        insertRegulation(FLOUNDER_WINTER, NY, "2016-04-01", "2016-05-30", new String[] {MINI_LEN + "12\"", BAG_LIMIT + 2});
+        insertRegulation(HADDOCK,         NY, "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "18\"", NO_BAG_LIMIT});
+        insertRegulation(MACKEREL_SPANISH,NY, "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "14\"", BAG_LIMIT + 15});
+        insertRegulation(MACKEREL_KING,   NY, "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "23\"", BAG_LIMIT + 3});
+        insertRegulation(MENHADEN_ATLANTIC, NY, "2016-01-01", "2016-12-31", new String[] {NO_MINI_LEN, BAG_LIMIT + 100});
+        insertRegulation(POLLOCK,         NY, "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "19\"", NO_BAG_LIMIT});
+        insertRegulation(SCUP,            NY, "2016-05-01", "2016-12-31", new String[] {MINI_LEN + "10\"", BAG_LIMIT + 30});
+        insertRegulation(SHAD_AMERICAN,   NY, "2016-12-32", "2016-12-31", new String[] {"No possession allowed"});
+        insertRegulation(SHAD_HICKORY,    NY, "2016-01-01", "2016-12-31", new String[] {NO_MINI_LEN, BAG_LIMIT + 5});
+        insertRegulation(STURGEON_ATLANTIC,NY,"2016-12-32", "2016-12-30", new String[] {"Moratorium", "No possession allowed"});
+        insertRegulation(TAUTOG,          NY, "2016-10-05", "2016-12-14", new String[] {MINI_LEN + "16\"", BAG_LIMIT + 4});
+        insertRegulation(TOADFISH_OYSTER, NY, "2016-07-16", "2017-05-15", new String[] {MINI_LEN + "10\"", BAG_LIMIT + 3});
+        insertRegulation(WEAKFISH,        NY, "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "16\"", "10\" filleted", "12\" dressed", BAG_LIMIT + 1});
+
+
+//        insertRegulation("Bass Largemouth", NY, "2016-06-17", "2016-11-30", 12, 5);
+//        insertRegulation("Bass Smallmouth", NY, "2016-06-17", "2016-11-30", 99999, 0);
 
         // NJ regulation ------------------------------------------------------------------------
-        insertRegulation(BASS_BLACK_SEA,   "NJ", "2016-05-23", "2016-06-19", new String[] {MINI_LEN + "12.5\"", BAG_LIMIT + 10});
-        insertRegulation(BASS_BLACK_SEA,   "NJ", "2016-07-01", "2016-08-31", new String[] {MINI_LEN + "12.5\"", BAG_LIMIT + 2});
-        insertRegulation(BASS_BLACK_SEA,   "NJ", "2016-10-22", "2016-12-31", new String[] {MINI_LEN + "13\"", BAG_LIMIT + 5});
-        insertRegulation(BASS_STRIPED,     "NJ", "2016-05-01", "2016-12-31", new String[] {"1 fish at 28 inches to less than 43 inches", "1 fish at 43 inches or greater"});
-        insertRegulation(BLUEFISH,         "NJ", "2016-01-01", "2016-12-31", new String[] {NO_MINI_LEN, BAG_LIMIT + 15});
-        insertRegulation(COD_ATLANTIC,     "NJ", "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "19\"", NO_BAG_LIMIT});
-        insertRegulation(DRUM_BLACK,       "NJ", "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "13\"", BAG_LIMIT + 1});
-        insertRegulation(FLOUNDER_SUMMER,  "NJ", "2016-05-21", "2016-09-25", new String[] {MINI_LEN + "18\"", BAG_LIMIT + 5});
-        insertRegulation(FLOUNDER_WINTER,  "NJ", "2016-03-01", "2016-12-31", new String[] {MINI_LEN + "12\"", BAG_LIMIT + 2});
-        insertRegulation(HADDOCK,          "NJ", "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "21\"", NO_BAG_LIMIT});
-        insertRegulation(POLLOCK,          "NJ", "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "19\"", NO_BAG_LIMIT});
-        insertRegulation(TAUTOG,           "NJ", "2016-01-01", "2016-02-28", new String[] {MINI_LEN + "15\"", BAG_LIMIT + 4});
-        insertRegulation(TAUTOG,           "NJ", "2016-04-01", "2016-04-30", new String[] {MINI_LEN + "15\"", BAG_LIMIT + 4});
-        insertRegulation(TAUTOG,           "NJ", "2016-07-17", "2016-11-15", new String[] {MINI_LEN + "15\"", BAG_LIMIT + 1});
-        insertRegulation(TAUTOG,           "NJ", "2016-11-16", "2016-12-31", new String[] {MINI_LEN + "15\"", BAG_LIMIT + 6});
-        insertRegulation(WEAKFISH,         "NJ", "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "13\"", BAG_LIMIT + 1});
+        String NJ = "NEW JERSEY";
+        insertRegulation(BASS_BLACK_SEA,   NJ, "2016-05-23", "2016-06-19", new String[] {MINI_LEN + "12.5\"", BAG_LIMIT + 10});
+        insertRegulation(BASS_BLACK_SEA,   NJ, "2016-07-01", "2016-08-31", new String[] {MINI_LEN + "12.5\"", BAG_LIMIT + 2});
+        insertRegulation(BASS_BLACK_SEA,   NJ, "2016-10-22", "2016-12-31", new String[] {MINI_LEN + "13\"", BAG_LIMIT + 5});
+        insertRegulation(BASS_STRIPED,     NJ, "2016-05-01", "2016-12-31", new String[] {"1 fish at 28 inches to less than 43 inches", "1 fish at 43 inches or greater"});
+        insertRegulation(BLUEFISH,         NJ, "2016-01-01", "2016-12-31", new String[] {NO_MINI_LEN, BAG_LIMIT + 15});
+        insertRegulation(COD_ATLANTIC,     NJ, "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "19\"", NO_BAG_LIMIT});
+        insertRegulation(DRUM_BLACK,       NJ, "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "13\"", BAG_LIMIT + 1});
+        insertRegulation(FLOUNDER_SUMMER,  NJ, "2016-05-21", "2016-09-25", new String[] {MINI_LEN + "18\"", BAG_LIMIT + 5});
+        insertRegulation(FLOUNDER_WINTER,  NJ, "2016-03-01", "2016-12-31", new String[] {MINI_LEN + "12\"", BAG_LIMIT + 2});
+        insertRegulation(HADDOCK,          NJ, "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "21\"", NO_BAG_LIMIT});
+        insertRegulation(POLLOCK,          NJ, "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "19\"", NO_BAG_LIMIT});
+        insertRegulation(TAUTOG,           NJ, "2016-01-01", "2016-02-28", new String[] {MINI_LEN + "15\"", BAG_LIMIT + 4});
+        insertRegulation(TAUTOG,           NJ, "2016-04-01", "2016-04-30", new String[] {MINI_LEN + "15\"", BAG_LIMIT + 4});
+        insertRegulation(TAUTOG,           NJ, "2016-07-17", "2016-11-15", new String[] {MINI_LEN + "15\"", BAG_LIMIT + 1});
+        insertRegulation(TAUTOG,           NJ, "2016-11-16", "2016-12-31", new String[] {MINI_LEN + "15\"", BAG_LIMIT + 6});
+        insertRegulation(WEAKFISH,         NJ, "2016-01-01", "2016-12-31", new String[] {MINI_LEN + "13\"", BAG_LIMIT + 1});
     }
 
     public void populateRecord() {

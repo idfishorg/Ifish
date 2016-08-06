@@ -1,5 +1,6 @@
 package com.panfishingllc.ifish;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -8,10 +9,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,18 +37,27 @@ public class Detail extends ActionBarActivity {
         }
 
         // set image
-        int thumbnail = cursor.getInt(cursor.getColumnIndex("Thumbnail"));
-        ImageView image = (ImageView) findViewById(R.id.imageView);
-        image.setImageResource(thumbnail);
+//        int thumbnail = cursor.getInt(cursor.getColumnIndex("Thumbnail"));
+//        ImageView image = (ImageView) findViewById(R.id.imageView);
+//        image.setImageResource(thumbnail);
+
 
         // set name
         TextView nameView = (TextView) findViewById(R.id.nameView);
         String speciesName = cursor.getString(cursor.getColumnIndex("SpeciesName"));
         nameView.setText(speciesName);
 
+        Context context = getApplicationContext();
+        int thumbnail = context.getResources().getIdentifier(speciesName,
+                "drawable", context.getPackageName());
+        Log.e("img", String.valueOf(thumbnail));
+        Log.e("img", String.valueOf(R.drawable.bass_striped));
+        ImageView image = (ImageView) findViewById(R.id.imageView);
+        image.setImageResource(thumbnail);
+
         // get state
         SharedPreferences setting = PreferenceManager.getDefaultSharedPreferences(this);
-        String state = setting.getString("state", "NY");
+        String state = setting.getString("state", "NEW YORK");
         Log.e("AREA", state);
 
         Calendar rightNow = Calendar.getInstance();
@@ -70,7 +79,9 @@ public class Detail extends ActionBarActivity {
                     isSeasonOpen = true;
                 }
 
-                ruleList.add(openDate + " ~ " + closeDate);
+                if (openDate.compareTo(closeDate) < 0) {
+                    ruleList.add(openDate + " ~ " + closeDate);
+                }
 
                 Cursor ruleCursor = db.getRule(seasonId);
                 while (!ruleCursor.isAfterLast()) {
