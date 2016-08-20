@@ -37,23 +37,17 @@ public class Detail extends ActionBarActivity {
         }
 
         // set image
-//        int thumbnail = cursor.getInt(cursor.getColumnIndex("Thumbnail"));
-//        ImageView image = (ImageView) findViewById(R.id.imageView);
-//        image.setImageResource(thumbnail);
-
+        Context context = getApplicationContext();
+        String thumbnailStr = cursor.getString(cursor.getColumnIndex("Thumbnail"));
+        int thumbnail = context.getResources().getIdentifier(thumbnailStr,
+                "drawable", getPackageName());
+        ImageView image = (ImageView) findViewById(R.id.imageView);
+        image.setImageResource(thumbnail);
 
         // set name
         TextView nameView = (TextView) findViewById(R.id.nameView);
         String speciesName = cursor.getString(cursor.getColumnIndex("SpeciesName"));
         nameView.setText(speciesName);
-
-        Context context = getApplicationContext();
-        int thumbnail = context.getResources().getIdentifier(speciesName,
-                "drawable", context.getPackageName());
-        Log.e("img", String.valueOf(thumbnail));
-        Log.e("img", String.valueOf(R.drawable.bass_striped));
-        ImageView image = (ImageView) findViewById(R.id.imageView);
-        image.setImageResource(thumbnail);
 
         // get state
         SharedPreferences setting = PreferenceManager.getDefaultSharedPreferences(this);

@@ -1,5 +1,6 @@
 package com.panfishingllc.ifish;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -29,60 +30,71 @@ public class MainActivity extends ActionBarActivity {
     private String state;
     public static String STATE = "state";
     public SpeciesAdaptor adapter;
-
-    @Override
-    public void onResume() {
-        super.onResume();  // Always call the superclass method first
-        Log.e("AA", "onResume()");
-        if (true)
-            return;
-
-        SharedPreferences setting = PreferenceManager.getDefaultSharedPreferences(this);
-        Log.e("BB", setting.getString("state", "CA"));
-
-        String updatedState = setting.getString("state", "NY");
-        if (!updatedState.equals(state)) {
+    public SharedPreferences.OnSharedPreferenceChangeListener prefChangedListener =
+            new SharedPreferences.OnSharedPreferenceChangeListener() {
+    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+        Log.e("AA", prefs.getString("state", "CA"));
+        if (key.equals("state")) {
+            Context context = getApplicationContext();
+            Log.e("AA", prefs.getString("state", "CA"));
+            String updatedState = prefs.getString("state", "NY");
             Cursor cursor = db.getAllSpecies(updatedState);
 
             ArrayList<Species> updatedList = new ArrayList<Species>();
             while (!cursor.isAfterLast()) {
                 int id = cursor.getInt(cursor.getColumnIndex("SpeciesId"));
                 String name = cursor.getString(cursor.getColumnIndex("SpeciesName"));
-                int thumbnail = cursor.getInt(cursor.getColumnIndex("Thumbnail"));
+                String thumbnailName = cursor.getString(cursor.getColumnIndex("Thumbnail"));
+                int thumbnail = context.getResources().getIdentifier(thumbnailName,
+                        "drawable", getPackageName());
                 updatedList.add(new Species(id, name, thumbnail));
                 cursor.moveToNext();
             }
 
             adapter.setSpeciesList(updatedList);
             adapter.notifyDataSetChanged();
-            state = updatedState;
         }
-
-        SharedPreferences.OnSharedPreferenceChangeListener prefListener =
-                new SharedPreferences.OnSharedPreferenceChangeListener() {
-                    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-                        Log.e("AA", prefs.getString("state", "CA"));
-                        if (key.equals("state")) {
-                            Log.e("AA", prefs.getString("state", "CA"));
-                            String updatedState = prefs.getString("state", "NY");
-                            Cursor cursor = db.getAllSpecies(updatedState);
-
-                            ArrayList<Species> updatedList = new ArrayList<Species>();
-                            while (!cursor.isAfterLast()) {
-                                int id = cursor.getInt(cursor.getColumnIndex("SpeciesId"));
-                                String name = cursor.getString(cursor.getColumnIndex("SpeciesName"));
-                                int thumbnail = cursor.getInt(cursor.getColumnIndex("thumbnail"));
-                                updatedList.add(new Species(id, name, thumbnail));
-                                cursor.moveToNext();
-                            }
-
-                            adapter.setSpeciesList(updatedList);
-                            adapter.notifyDataSetChanged();
-                        }
-                    }
-                };
-        setting.registerOnSharedPreferenceChangeListener(prefListener);
     }
+            };
+
+    @Override
+    public void onResume() {
+        super.onResume();  // Always call the superclass method first
+        Log.e("AA", "onResume()");
+
+
+        SharedPreferences setting = PreferenceManager.getDefaultSharedPreferences(this);
+        Log.e("BB", setting.getString("state", "CA"));
+        setting.registerOnSharedPreferenceChangeListener(prefChangedListener);
+
+//        String updatedState = setting.getString("state", "NY");
+//        if (!updatedState.equals(state)) {
+//            Cursor cursor = db.getAllSpecies(updatedState);
+//
+//            ArrayList<Species> updatedList = new ArrayList<Species>();
+//            while (!cursor.isAfterLast()) {
+//                int id = cursor.getInt(cursor.getColumnIndex("SpeciesId"));
+//                String name = cursor.getString(cursor.getColumnIndex("SpeciesName"));
+//                int thumbnail = cursor.getInt(cursor.getColumnIndex("Thumbnail"));
+//                updatedList.add(new Species(id, name, thumbnail));
+//                cursor.moveToNext();
+//            }
+//
+//            adapter.setSpeciesList(updatedList);
+//            adapter.notifyDataSetChanged();
+//            state = updatedState;
+//        }
+//        setting.registerOnSharedPreferenceChangeListener(prefChangedListener);
+
+//        SharedPreferences.OnSharedPreferenceChangeListener prefListener =
+//                new SharedPreferences.OnSharedPreferenceChangeListener() {
+//
+//                };
+//        getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+    }
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,12 +111,14 @@ public class MainActivity extends ActionBarActivity {
 
         // get all species of state
         Cursor cursor = db.getAllSpecies(state);
-
+        Context context = getApplicationContext();
         ArrayList<Species> speciesList = new ArrayList<Species>();
         while (!cursor.isAfterLast()) {
             int id = cursor.getInt(cursor.getColumnIndex("SpeciesId"));
             String name = cursor.getString(cursor.getColumnIndex("SpeciesName"));
-            int thumbnail = cursor.getInt(cursor.getColumnIndex("Thumbnail"));
+            String thumbnailName = cursor.getString(cursor.getColumnIndex("Thumbnail"));
+            int thumbnail = context.getResources().getIdentifier(thumbnailName,
+                    "drawable", getPackageName());
             speciesList.add(new Species(id, name, thumbnail));
             cursor.moveToNext();
         }

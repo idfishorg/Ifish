@@ -33,7 +33,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String CREATE_SPECIES_T = "CREATE TABLE " + SPECIES_T
             + " (SpeciesId INTEGER PRIMARY KEY AUTOINCREMENT, "
             + "SpeciesName TEXT, "
-            + "Thumbnail INTEGER)";
+            + "Thumbnail TEXT)";
 
     // species area table: id, area, species id,
     public static final String CREATE_AREA_SPECIES_T = "CREATE TABLE " + AREA_SPECIES_T
@@ -205,10 +205,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return;
     }
 
-    public void insertSpecies(String speciesName, Integer thumbnail) {
+    public void insertSpecies(String speciesName, String thumbnail) {
         ContentValues contentValues = new ContentValues();
-        Log.e("AA", speciesName);
-        Log.e("AA", String.valueOf(thumbnail));
+        Log.e("AA", speciesName + thumbnail);
         contentValues.put("SpeciesName", speciesName);
         contentValues.put("Thumbnail", thumbnail);
 
@@ -485,59 +484,59 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void populateSpecies() {
 //        insertSpecies(AMERICAN_EEL, );
-        insertSpecies(BASS_BLACK_SEA, R.drawable.bass_black_sea);
-        insertSpecies("Bass Largemouth", R.drawable.bass_large_mouth);
-        insertSpecies("Bass Smallmouth", R.drawable.bass_small_mouth);
-        insertSpecies(BASS_STRIPED, R.drawable.bass_striped);
-        insertSpecies("Bass White", R.drawable.bass_white);
-        insertSpecies(BLUEFISH, R.drawable.bluefish);
-        insertSpecies("Carp Common", R.drawable.carp_common);
-        insertSpecies("Catfish Channel", R.drawable.catfish_channel);
-        insertSpecies(COBIA, R.drawable.cobia);
-        insertSpecies(COD_ATLANTIC, R.drawable.cod_atlantic);
-        insertSpecies("Cod Pacific", R.drawable.cod_pacific);
-        insertSpecies(DRUM_RED, R.drawable.drum_red);
-        insertSpecies(DRUM_BLACK, R.drawable.drum_black);
-        insertSpecies(FLOUNDER_SUMMER, R.drawable.flounder_summer);
-        insertSpecies(FLOUNDER_YELLOWTAIL, R.drawable.flounder_yellowtail);
-        insertSpecies(FLOUNDER_WINTER, R.drawable.flounder_winter);
-        insertSpecies("Gar Alligator", R.drawable.gar_alligator);
-        insertSpecies("Gar Longnose", R.drawable.gar_longnose);
-        insertSpecies("Gar Shortnose", R.drawable.gar_shortnose);
-        insertSpecies("Grouper Black",R.drawable.grouper_black);
-        insertSpecies("Grouper Red", R.drawable.grouper_red);
-        insertSpecies(HADDOCK, R.drawable.haddock);
-        insertSpecies(MACKEREL_KING, R.drawable.mackerel_king);
-        insertSpecies(MACKEREL_SPANISH, R.drawable.mackerel_span);
-        insertSpecies(MENHADEN_ATLANTIC, R.drawable.menhaden_atlantic);
-        insertSpecies(POLLOCK, R.drawable.pollock);
-        insertSpecies("Salmon Alantic ",R.drawable.salmon_atlantic);
-        insertSpecies("Salmon Chinook",R.drawable.salmon_chinook);
-        insertSpecies("Salmon Coho",R.drawable.salmon_coho);
-        insertSpecies("Salmon Pink",R.drawable.salmon_pink);
-        insertSpecies("Salmon Sockeye", R.drawable.salmon_sockeye);
-        insertSpecies("Sauger",R.drawable.sauger);
-        insertSpecies(SCUP, R.drawable.scup);
-        insertSpecies("Seabass Blackfin",R.drawable.seabass_blackfin);
-        insertSpecies("Seatrout Spotted",R.drawable.seatrout_spotted);
-        insertSpecies(SHAD_AMERICAN, R.drawable.shad_american);
-        insertSpecies(SHAD_HICKORY, R.drawable.shad_hickory);
-        insertSpecies("Shark Blue",R.drawable.shark_blue);
-        insertSpecies("Shark Mako",R.drawable.shark_mako);
-        insertSpecies("Shark Tiger", R.drawable.shark_tiger);
-        insertSpecies("Shark White", R.drawable.shark_white);
-        insertSpecies("Snapper Mutton",R.drawable.snapper_mutton);
-        insertSpecies("Snapper Red",R.drawable.snapper_red);
-        insertSpecies("Sunfish Redear",R.drawable.sunfish_readear);
-        insertSpecies("Sunfish Redbreast", R.drawable.sunfish_redbreast);
-        insertSpecies(STURGEON_ATLANTIC, R.drawable.sturgeon_atlantic);
-        insertSpecies("Swordfish",R.drawable.swordfish);
-        insertSpecies("Taimen",R.drawable.taimen);
-        insertSpecies("Tarpon",R.drawable.tarpon);
-        insertSpecies(TAUTOG, R.drawable.tautog);
-        insertSpecies(TOADFISH_OYSTER, R.drawable.toadfish_oyster);
-        insertSpecies("Trout Rainbow",R.drawable.trout_rainbow);
-        insertSpecies(WEAKFISH, R.drawable.weakfish);
+        insertSpecies(BASS_BLACK_SEA, "bass_black_sea");
+        insertSpecies("Bass Largemouth", "bass_large_mouth");
+        insertSpecies("Bass Smallmouth", "bass_small_mouth");
+        insertSpecies(BASS_STRIPED, "bass_striped");
+        insertSpecies("Bass White", "bass_white");
+        insertSpecies(BLUEFISH, "bluefish");
+        insertSpecies("Carp Common", "carp_common");
+        insertSpecies("Catfish Channel", "catfish_channel");
+        insertSpecies(COBIA, "cobia");
+        insertSpecies(COD_ATLANTIC, "cod_atlantic");
+        insertSpecies("Cod Pacific", "cod_pacific");
+        insertSpecies(DRUM_RED, "drum_red");
+        insertSpecies(DRUM_BLACK, "drum_black");
+        insertSpecies(FLOUNDER_SUMMER, "flounder_summer");
+        insertSpecies(FLOUNDER_YELLOWTAIL, "flounder_yellowtail");
+        insertSpecies(FLOUNDER_WINTER, "flounder_winter");
+        insertSpecies("Gar Alligator", "gar_alligator");
+        insertSpecies("Gar Longnose", "gar_longnose");
+        insertSpecies("Gar Shortnose", "gar_shortnose");
+        insertSpecies("Grouper Black","grouper_black");
+        insertSpecies("Grouper Red", "grouper_red");
+        insertSpecies(HADDOCK, "haddock");
+        insertSpecies(MACKEREL_KING, "mackerel_king");
+        insertSpecies(MACKEREL_SPANISH, "mackerel_span");
+        insertSpecies(MENHADEN_ATLANTIC, "menhaden_atlantic");
+        insertSpecies(POLLOCK, "pollock");
+        insertSpecies("Salmon Alantic ","salmon_atlantic");
+        insertSpecies("Salmon Chinook","salmon_chinook");
+        insertSpecies("Salmon Coho","salmon_coho");
+        insertSpecies("Salmon Pink","salmon_pink");
+        insertSpecies("Salmon Sockeye", "salmon_sockeye");
+        insertSpecies("Sauger","sauger");
+        insertSpecies(SCUP, "scup");
+        insertSpecies("Seabass Blackfin","seabass_blackfin");
+        insertSpecies("Seatrout Spotted","seatrout_spotted");
+        insertSpecies(SHAD_AMERICAN, "shad_american");
+        insertSpecies(SHAD_HICKORY, "shad_hickory");
+        insertSpecies("Shark Blue","shark_blue");
+        insertSpecies("Shark Mako","shark_mako");
+        insertSpecies("Shark Tiger", "shark_tiger");
+        insertSpecies("Shark White", "shark_white");
+        insertSpecies("Snapper Mutton","snapper_mutton");
+        insertSpecies("Snapper Red","snapper_red");
+        insertSpecies("Sunfish Redear","sunfish_readear");
+        insertSpecies("Sunfish Redbreast", "sunfish_redbreast");
+        insertSpecies(STURGEON_ATLANTIC, "sturgeon_atlantic");
+        insertSpecies("Swordfish","swordfish");
+        insertSpecies("Taimen","taimen");
+        insertSpecies("Tarpon","tarpon");
+        insertSpecies(TAUTOG, "tautog");
+        insertSpecies(TOADFISH_OYSTER, "toadfish_oyster");
+        insertSpecies("Trout Rainbow","trout_rainbow");
+        insertSpecies(WEAKFISH, "weakfish");
     }
 
     public void populateAreas() {
